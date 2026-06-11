@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>For Someone Special ❤️</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- FONT -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+</head>
+
+<body>
+
+  <!-- MUSIC -->
+  <audio
+    autoplay
+    loop
+    preload="auto"
+    id="bgMusic"
+  >
+    <source src="assets/music.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- BACKGROUND -->
+  <div class="bg"></div>
+  <div class="overlay"></div>
+
+  <!-- NEON LIGHTS -->
+  <div class="light light1"></div>
+  <div class="light light2"></div>
+
+  <!-- PETALS -->
+  <div class="petals"></div>
+
+  <!-- CURSOR -->
+  <div class="cursor-glow"></div>
+
+  <!-- MUSIC BUTTON -->
+  <button
+    id="musicBtn"
+    type="button"
+    aria-label="Pause music"
+    title="Pause music"
+  >
+    🎵
+  </button>
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <h1 class="title">
+      You Make My World Beautiful 🌻
+    </h1>
+
+    <h2 id="typing"></h2>
+
+    <p class="subtitle">
+      Every memory with you feels magical ✨
+    </p>
+
+    <div class="timer">
+      <h3 id="countdown"></h3>
+    </div>
+
+  </section>
+
+  <!-- 3D CUBE -->
+  <section class="cube-section">
+
+    <div class="cube-container">
+
+      <div class="cube">
+
+        <div class="front">
+          <img src="assets/img1.jpg">
+        </div>
+
+        <div class="back">
+          <img src="assets/img2.jpg">
+        </div>
+
+        <div class="left">
+          <img src="assets/img3.jpg">
+        </div>
+
+        <div class="right">
+          <img src="assets/img4.jpg">
+        </div>
+
+        <div class="top">
+          <img src="assets/img1.jpg">
+        </div>
+
+        <div class="bottom">
+          <img src="assets/img2.jpg">
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- MEMORIES -->
+  <section class="memories">
+
+    <h1 class="section-title">
+      Our Memories 💖
+    </h1>
+
+    <div class="memory-grid">
+
+      <div class="memory">
+        <img src="assets/img1.jpg">
+        <p>The smile I never want to lose ✨</p>
+      </div>
+
+      <div class="memory">
+        <img src="assets/img2.jpg">
+        <p>The moment my heart paused ❤️</p>
+      </div>
+
+      <div class="memory">
+        <img src="assets/img3.jpg">
+        <p>Every second feels special 🌸</p>
+      </div>
+
+      <div class="memory">
+        <img src="assets/img4.jpg">
+        <p>You make ordinary moments magical 💫</p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- VIDEO -->
+  <section class="video-section">
+
+    <video autoplay muted loop playsinline>
+
+      <source src="assets/video.mp4" type="video/mp4">
+
+    </video>
+
+  </section>
+
+  <!-- LOVE NOTE -->
+  <section class="love-section">
+
+    <button id="loveBtn">
+      Open Secret 💌
+    </button>
+
+  </section>
+
+  <!-- POPUP -->
+  <div class="popup" id="popup">
+
+    <div class="popup-content">
+
+      <h1>You’re My Favorite Person ❤️</h1>
+
+      <p>
+        No matter how many stars exist,
+        you’ll always be my favorite light ✨
+      </p>
+
+      <button onclick="closePopup()">
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- FLOWERS -->
+  <div class="flowers">
+    🌻 🌸 💖 ✨ 🌷
+  </div>
+
+  <!-- JS -->
+  <script src="script.js"></script>
+
+</body>
+
+</html>
