@@ -1,366 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Restaurant AI Assistant</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Random User App</title>
 
-  <style>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#141e30,#243b55);
+    overflow:hidden;
+}
+
+.container{
+    width:360px;
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(12px);
+    border-radius:25px;
+    padding:30px;
+    text-align:center;
+    color:white;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    animation:fadeIn 1s ease;
+}
+
+h1{
+    margin-bottom:10px;
+    font-size:30px;
+}
+
+.subtitle{
+    color:#ddd;
+    margin-bottom:25px;
+}
+
+.card{
+    background:white;
+    color:black;
+    border-radius:20px;
+    padding:20px;
+    transition:0.4s;
+}
+
+.card:hover{
+    transform:scale(1.03);
+}
+
+.card img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    border:5px solid #243b55;
+    margin-bottom:15px;
+}
+
+.card h2{
+    margin-bottom:10px;
+}
+
+.info{
+    margin:8px 0;
+    color:#333;
+    font-size:15px;
+}
+
+button{
+    margin-top:25px;
+    padding:12px 28px;
+    border:none;
+    border-radius:40px;
+    background:linear-gradient(45deg,#00c6ff,#0072ff);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 5px 15px rgba(0,114,255,0.4);
+}
+
+.loader{
+    display:none;
+    margin-top:15px;
+    color:#fff;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
     }
-
-    body{
-      font-family: Inter, Arial, sans-serif;
-      background:#0f172a;
-      color:white;
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:20px;
+    to{
+        opacity:1;
+        transform:translateY(0);
     }
-
-    .chat-container{
-      width:100%;
-      max-width:850px;
-      height:90vh;
-      background:#111827;
-      border-radius:24px;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      border:1px solid rgba(255,255,255,0.08);
-      box-shadow:0 10px 40px rgba(0,0,0,0.4);
-    }
-
-    .chat-header{
-      padding:22px;
-      border-bottom:1px solid rgba(255,255,255,0.08);
-      background:#0b1220;
-    }
-
-    .chat-header h1{
-      font-size:24px;
-      font-weight:700;
-    }
-
-    .chat-header p{
-      margin-top:6px;
-      color:#94a3b8;
-      font-size:14px;
-    }
-
-    #chat-box{
-      flex:1;
-      overflow-y:auto;
-      padding:24px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      scroll-behavior:smooth;
-    }
-
-    .message{
-      max-width:80%;
-      padding:16px 18px;
-      border-radius:18px;
-      line-height:1.6;
-      white-space:pre-wrap;
-      word-wrap:break-word;
-      font-size:15px;
-    }
-
-    .user-message{
-      align-self:flex-end;
-      background:#2563eb;
-      border-bottom-right-radius:4px;
-    }
-
-    .bot-message{
-      align-self:flex-start;
-      background:#1e293b;
-      border-bottom-left-radius:4px;
-      border:1px solid rgba(255,255,255,0.05);
-    }
-
-    .typing{
-      display:flex;
-      gap:6px;
-      align-items:center;
-    }
-
-    .typing span{
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:#94a3b8;
-      animation:bounce 1s infinite;
-    }
-
-    .typing span:nth-child(2){
-      animation-delay:0.2s;
-    }
-
-    .typing span:nth-child(3){
-      animation-delay:0.4s;
-    }
-
-    @keyframes bounce{
-      0%,80%,100%{
-        transform:scale(0);
-      }
-      40%{
-        transform:scale(1);
-      }
-    }
-
-    .input-area{
-      display:flex;
-      gap:12px;
-      padding:18px;
-      border-top:1px solid rgba(255,255,255,0.08);
-      background:#0b1220;
-    }
-
-    #userInput{
-      flex:1;
-      background:#1e293b;
-      border:none;
-      outline:none;
-      color:white;
-      padding:16px;
-      border-radius:14px;
-      font-size:15px;
-    }
-
-    #userInput::placeholder{
-      color:#94a3b8;
-    }
-
-    button{
-      border:none;
-      outline:none;
-      background:#2563eb;
-      color:white;
-      padding:0 24px;
-      border-radius:14px;
-      cursor:pointer;
-      font-size:15px;
-      font-weight:600;
-      transition:0.2s;
-    }
-
-    button:hover{
-      background:#1d4ed8;
-    }
-
-    .suggestions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .suggestion-btn{
-      background:#1e293b;
-      border:1px solid rgba(255,255,255,0.08);
-      color:#cbd5e1;
-      padding:10px 14px;
-      border-radius:999px;
-      cursor:pointer;
-      font-size:13px;
-      transition:0.2s;
-    }
-
-    .suggestion-btn:hover{
-      background:#334155;
-    }
-
-    @media(max-width:768px){
-
-      .chat-container{
-        height:100vh;
-        border-radius:0;
-      }
-
-      .message{
-        max-width:90%;
-      }
-
-      button{
-        padding:0 18px;
-      }
-    }
-
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-  <div class="chat-container">
+<div class="container">
+    <h1>🌍 User Generator</h1>
+    <p class="subtitle">Interactive Website Using Public API</p>
 
-    <div class="chat-header">
-      <h1>🍽 Restaurant AI Assistant</h1>
-      <p>Ask about menus, cuisines, food recommendations, and meals.</p>
+    <div class="card">
+        <img id="userImage" src="" alt="User Image">
 
-      <div class="suggestions">
-        <button class="suggestion-btn" onclick="quickMessage('Show italian dinner menu')">
-          Italian Dinner
-        </button>
+        <h2 id="userName">Loading...</h2>
 
-        <button class="suggestion-btn" onclick="quickMessage('Best indian lunch items')">
-          Indian Lunch
-        </button>
-
-        <button class="suggestion-btn" onclick="quickMessage('Show japanese breakfast menu')">
-          Japanese Breakfast
-        </button>
-
-        <button class="suggestion-btn" onclick="quickMessage('Recommend mexican dinner')">
-          Mexican Dinner
-        </button>
-      </div>
+        <p class="info" id="userEmail"></p>
+        <p class="info" id="userPhone"></p>
+        <p class="info" id="userLocation"></p>
     </div>
 
-    <div id="chat-box">
+    <button onclick="fetchUser()">Generate User</button>
 
-      <div class="message bot-message">
-👋 Welcome to Restaurant AI Assistant
+    <div class="loader" id="loader">Loading User...</div>
+</div>
 
-You can ask things like:
+<script>
+const userImage = document.getElementById("userImage");
+const userName = document.getElementById("userName");
+const userEmail = document.getElementById("userEmail");
+const userPhone = document.getElementById("userPhone");
+const userLocation = document.getElementById("userLocation");
+const loader = document.getElementById("loader");
 
-• Show italian dinner menu
-• Recommend chinese lunch
-• Best american breakfast
-• Suggest french cuisine
-      </div>
+async function fetchUser(){
 
-    </div>
+    loader.style.display = "block";
 
-    <div class="input-area">
+    try{
 
-      <input
-        type="text"
-        id="userInput"
-        placeholder="Ask about food or menus..."
-      />
-
-      <button onclick="sendMessage()">
-        Send
-      </button>
-
-    </div>
-
-  </div>
-
-  <script>
-
-    const chatBox = document.getElementById("chat-box");
-    const inputField = document.getElementById("userInput");
-
-    function addMessage(message, type){
-
-      const div = document.createElement("div");
-
-      div.className = `message ${type}`;
-
-      div.textContent = message;
-
-      chatBox.appendChild(div);
-
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function showTyping(){
-
-      const div = document.createElement("div");
-
-      div.className = "message bot-message";
-
-      div.id = "typing-indicator";
-
-      div.innerHTML = `
-        <div class="typing">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      `;
-
-      chatBox.appendChild(div);
-
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function removeTyping(){
-
-      const typing = document.getElementById("typing-indicator");
-
-      if(typing){
-        typing.remove();
-      }
-    }
-
-    async function sendMessage(){
-
-      const input = inputField.value.trim();
-
-      if(!input) return;
-
-      addMessage(input, "user-message");
-
-      inputField.value = "";
-
-      showTyping();
-
-      try{
-
-        const response = await fetch("/api/chat", {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
-            input
-          })
-        });
-
+        const response = await fetch("https://randomuser.me/api/");
         const data = await response.json();
 
-        removeTyping();
+        const user = data.results[0];
 
-        addMessage(data.output, "bot-message");
+        userImage.src = user.picture.large;
 
-      }catch(error){
+        userName.innerText =
+            user.name.first + " " + user.name.last;
 
-        removeTyping();
+        userEmail.innerText =
+            "📧 " + user.email;
 
-        addMessage(
-          "Sorry, something went wrong.",
-          "bot-message"
-        );
-      }
+        userPhone.innerText =
+            "📞 " + user.phone;
+
+        userLocation.innerText =
+            "📍 " +
+            user.location.city +
+            ", " +
+            user.location.country;
+
     }
 
-    function quickMessage(text){
+    catch(error){
 
-      inputField.value = text;
+        userName.innerText = "Failed to Load User";
 
-      sendMessage();
+        console.log(error);
     }
 
-    inputField.addEventListener("keypress", function(e){
+    loader.style.display = "none";
+}
 
-      if(e.key === "Enter"){
-        sendMessage();
-      }
-    });
-
-  </script>
+fetchUser();
+</script>
 
 </body>
 </html>
