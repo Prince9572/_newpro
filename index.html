@@ -1,1073 +1,293 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentiment Studio</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-        :root {
-            --bg: #08141f;
-            --bg-soft: #102436;
-            --panel: rgba(10, 26, 40, 0.8);
-            --panel-border: rgba(122, 197, 255, 0.18);
-            --text: #f4f9ff;
-            --muted: #96abc0;
-            --positive: #2fd18b;
-            --negative: #ff7a59;
-            --neutral: #ffcd57;
-            --accent: #55c7ff;
-            --accent-2: #1f8fbf;
-            --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-            --radius-lg: 28px;
-            --radius-md: 18px;
-            --radius-sm: 12px;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: "Space Grotesk", sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(85, 199, 255, 0.18), transparent 34%),
-                radial-gradient(circle at bottom right, rgba(255, 122, 89, 0.2), transparent 32%),
-                linear-gradient(160deg, #071019 0%, #0e2232 55%, #06131f 100%);
-            color: var(--text);
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-            background-size: 36px 36px;
-            pointer-events: none;
-            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.25));
-        }
-
-        .page {
-            width: min(1180px, calc(100% - 32px));
-            margin: 32px auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero,
-        .card {
-            background: var(--panel);
-            border: 1px solid var(--panel-border);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(20px);
-        }
-
-        .hero {
-            padding: 28px;
-            border-radius: var(--radius-lg);
-            display: grid;
-            gap: 18px;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            width: fit-content;
-            padding: 8px 12px;
-            border-radius: 999px;
-            background: rgba(85, 199, 255, 0.14);
-            color: #b8e7ff;
-            font-size: 0.82rem;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-        }
-
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1.4fr 1fr;
-            gap: 22px;
-            align-items: end;
-        }
-
-        .hero h1 {
-            margin: 0;
-            font-size: clamp(2.2rem, 4vw, 4rem);
-            line-height: 0.95;
-            letter-spacing: -0.04em;
-        }
-
-        .hero p {
-            margin: 0;
-            color: var(--muted);
-            font-size: 1rem;
-            max-width: 60ch;
-        }
-
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .status-tile {
-            padding: 16px;
-            border-radius: var(--radius-md);
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .status-tile span {
-            display: block;
-            color: var(--muted);
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 8px;
-        }
-
-        .status-tile strong {
-            display: block;
-            font-size: 1rem;
-            line-height: 1.4;
-        }
-
-        .workspace {
-            margin-top: 24px;
-            display: grid;
-            grid-template-columns: 1.05fr 0.95fr;
-            gap: 24px;
-        }
-
-        .card {
-            border-radius: var(--radius-lg);
-            padding: 24px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .section-title h2,
-        .section-title h3 {
-            margin: 0;
-            font-size: 1.12rem;
-        }
-
-        .section-title p {
-            margin: 4px 0 0;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .examples {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .chip,
-        .history-item button,
-        .ghost-button {
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text);
-            border-radius: 999px;
-            cursor: pointer;
-            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-        }
-
-        .chip {
-            padding: 10px 14px;
-            font: inherit;
-            font-size: 0.88rem;
-        }
-
-        .chip:hover,
-        .history-item button:hover,
-        .ghost-button:hover {
-            transform: translateY(-1px);
-            border-color: rgba(85, 199, 255, 0.45);
-            background: rgba(85, 199, 255, 0.12);
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 220px;
-            resize: vertical;
-            padding: 18px;
-            border-radius: 22px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            outline: none;
-            background: rgba(3, 11, 18, 0.72);
-            color: var(--text);
-            font: inherit;
-            font-size: 1rem;
-            line-height: 1.65;
-            transition: border-color 0.18s ease, box-shadow 0.18s ease;
-        }
-
-        textarea:focus {
-            border-color: rgba(85, 199, 255, 0.5);
-            box-shadow: 0 0 0 4px rgba(85, 199, 255, 0.12);
-        }
-
-        .composer-footer {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .stats-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .stat-pill,
-        .tag,
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 12px;
-            border-radius: 999px;
-            font-size: 0.84rem;
-        }
-
-        .stat-pill {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--muted);
-        }
-
-        .badge {
-            background: rgba(85, 199, 255, 0.12);
-            color: #ccefff;
-        }
-
-        .tag {
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-
-        button {
-            font: inherit;
-        }
-
-        .primary-button,
-        .ghost-button {
-            padding: 12px 18px;
-            border-radius: 14px;
-            border: none;
-        }
-
-        .primary-button {
-            background: linear-gradient(135deg, var(--accent) 0%, #7fe6d4 100%);
-            color: #052131;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-            box-shadow: 0 10px 24px rgba(85, 199, 255, 0.26);
-        }
-
-        .primary-button:hover {
-            transform: translateY(-1px);
-        }
-
-        .primary-button:disabled {
-            cursor: wait;
-            opacity: 0.75;
-        }
-
-        .ghost-button {
-            color: var(--text);
-        }
-
-        .toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .toggle input {
-            appearance: none;
-            width: 48px;
-            height: 28px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.14);
-            position: relative;
-            cursor: pointer;
-            transition: background 0.18s ease;
-        }
-
-        .toggle input::after {
-            content: "";
-            width: 20px;
-            height: 20px;
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            border-radius: 50%;
-            background: white;
-            transition: transform 0.18s ease;
-        }
-
-        .toggle input:checked {
-            background: rgba(85, 199, 255, 0.8);
-        }
-
-        .toggle input:checked::after {
-            transform: translateX(20px);
-        }
-
-        .dashboard {
-            display: grid;
-            gap: 18px;
-        }
-
-        .result-hero {
-            display: grid;
-            gap: 20px;
-        }
-
-        .result-top {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 18px;
-            align-items: center;
-        }
-
-        .sentiment-title h2 {
-            margin: 0;
-            font-size: clamp(1.8rem, 3vw, 2.8rem);
-        }
-
-        .sentiment-title p {
-            margin: 8px 0 0;
-            color: var(--muted);
-        }
-
-        .score-card {
-            min-width: 220px;
-            padding: 16px;
-            border-radius: 22px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .score-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .mono {
-            font-family: "IBM Plex Mono", monospace;
-        }
-
-        .meter {
-            width: 100%;
-            height: 12px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.08);
-            overflow: hidden;
-        }
-
-        .meter span {
-            display: block;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--accent), #7fe6d4);
-            width: 0;
-            transition: width 0.25s ease;
-        }
-
-        .panel-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .metric {
-            padding: 14px;
-            border-radius: var(--radius-md);
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .metric span {
-            display: block;
-            font-size: 0.82rem;
-            color: var(--muted);
-            margin-bottom: 8px;
-        }
-
-        .metric strong {
-            font-size: 1.1rem;
-        }
-
-        .list-block {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .stack {
-            display: grid;
-            gap: 14px;
-        }
-
-        .sentence-list,
-        .history-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .sentence-item,
-        .history-item {
-            padding: 14px 16px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .sentence-head,
-        .history-head {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .sentence-item p,
-        .history-item p {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.5;
-            word-break: break-word;
-        }
-
-        .history-item button {
-            padding: 9px 12px;
-            font: inherit;
-        }
-
-        .empty-state {
-            border: 1px dashed rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--muted);
-            padding: 24px;
-            border-radius: 22px;
-            text-align: center;
-        }
-
-        .sentiment-positive {
-            color: var(--positive);
-        }
-
-        .sentiment-negative {
-            color: var(--negative);
-        }
-
-        .sentiment-neutral {
-            color: var(--neutral);
-        }
-
-        .error-box {
-            display: none;
-            margin-top: 16px;
-            padding: 14px 16px;
-            border-radius: 16px;
-            background: rgba(255, 122, 89, 0.12);
-            border: 1px solid rgba(255, 122, 89, 0.28);
-            color: #ffd7cd;
-        }
-
-        @media (max-width: 980px) {
-            .hero-grid,
-            .workspace,
-            .panel-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .page {
-                width: min(100% - 20px, 100%);
-                margin: 20px auto;
-            }
-
-            .hero,
-            .card {
-                padding: 18px;
-                border-radius: 24px;
-            }
-
-            .status-grid,
-            .metrics-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .result-top {
-                align-items: stretch;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPUS — Task Manager</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts: Playfair Display + DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Phosphor Icons -->
+  <script src="script.js" defer></script>
 </head>
 <body>
-    <main class="page">
-        <section class="hero">
-            <div class="eyebrow">Sentiment Studio</div>
-            <div class="hero-grid">
-                <div>
-                    <h1>Analyze tone like a product, not a demo.</h1>
-                    <p>
-                        Run single-text or line-by-line sentiment analysis, inspect confidence and tone,
-                        and keep a browser-side history that makes quick comparisons easy.
-                    </p>
-                </div>
-                <div class="status-grid">
-                    <div class="status-tile">
-                        <span>Engine</span>
-                        <strong id="engineLabel">Checking deployment status...</strong>
-                    </div>
-                    <div class="status-tile">
-                        <span>Deployability</span>
-                        <strong id="deployLabel">Preparing Vercel-friendly mode</strong>
-                    </div>
-                    <div class="status-tile">
-                        <span>Modes</span>
-                        <strong>Single, batch, sentence-level</strong>
-                    </div>
-                    <div class="status-tile">
-                        <span>Output</span>
-                        <strong>Summary, keywords, metrics, exportable JSON</strong>
-                    </div>
-                </div>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ===== CONFIRM MODAL ===== -->
+  <div id="confirm-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title" hidden>
+    <div class="modal-box">
+      <div class="modal-icon"><i class="ph ph-warning"></i></div>
+      <h3 id="confirm-title">Confirm Action</h3>
+      <p id="confirm-message">Are you sure you want to proceed?</p>
+      <div class="modal-actions">
+        <button id="confirm-cancel" class="btn btn-ghost">Cancel</button>
+        <button id="confirm-ok" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TASK FORM MODAL ===== -->
+  <div id="task-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal-box modal-form-box">
+      <div class="modal-header">
+        <h3 id="modal-title">New Task</h3>
+        <button id="modal-close" class="icon-btn" aria-label="Close"><i class="ph ph-x"></i></button>
+      </div>
+
+      <form id="task-form" novalidate>
+        <input type="hidden" id="task-id" />
+
+        <div class="form-row">
+          <div class="form-group full">
+            <label for="task-title">Task Title <span class="required">*</span></label>
+            <input type="text" id="task-title" placeholder="What needs to be done?" maxlength="80" autocomplete="off" />
+            <span class="field-error" id="title-error"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full">
+            <label for="task-desc">Description</label>
+            <textarea id="task-desc" placeholder="Add details…" rows="3" maxlength="300"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label for="task-date">Date <span class="required">*</span></label>
+            <input type="date" id="task-date" />
+            <span class="field-error" id="date-error"></span>
+          </div>
+          <div class="form-group">
+            <label for="task-time">Time</label>
+            <input type="time" id="task-time" />
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label for="task-priority">Priority</label>
+            <div class="select-wrapper">
+              <select id="task-priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+              <i class="ph ph-caret-down select-arrow"></i>
             </div>
-        </section>
+          </div>
+          <div class="form-group">
+            <label for="task-category">Category</label>
+            <div class="select-wrapper">
+              <select id="task-category">
+                <option value="work">Work</option>
+                <option value="study">Study</option>
+                <option value="personal">Personal</option>
+                <option value="other">Other</option>
+              </select>
+              <i class="ph ph-caret-down select-arrow"></i>
+            </div>
+          </div>
+        </div>
 
-        <section class="workspace">
-            <section class="card">
-                <div class="section-title">
-                    <div>
-                        <h2>Input</h2>
-                        <p>Paste text, or switch on batch mode to score each line separately.</p>
-                    </div>
-                    <div class="badge mono" id="modeBadge">Mode: single</div>
-                </div>
+        <div class="form-actions">
+          <button type="button" id="form-cancel" class="btn btn-ghost">Cancel</button>
+          <button type="submit" id="form-submit" class="btn btn-gold">
+            <i class="ph ph-plus-circle"></i>
+            <span id="submit-label">Add Task</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-                <div class="examples">
-                    {% for example in examples %}
-                    <button class="chip example-button" type="button" data-example="{{ example }}">{{ example }}</button>
-                    {% endfor %}
-                    <button class="chip" type="button" id="batchExample">Load batch sample</button>
-                </div>
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-logo"><i class="ph ph-diamond"></i></span>
+      <span class="brand-name">OPUS</span>
+    </div>
 
-                <textarea id="textInput" placeholder="Type product reviews, customer feedback, social posts, or release notes here..."></textarea>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-view="tasks">
+        <i class="ph ph-squares-four"></i><span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-view="history">
+        <i class="ph ph-clock-clockwise"></i><span>History</span>
+      </button>
+    </nav>
 
-                <div class="composer-footer">
-                    <div class="stats-row">
-                        <div class="stat-pill" id="charCount">0 characters</div>
-                        <div class="stat-pill" id="wordCount">0 words</div>
-                        <div class="stat-pill" id="lineCount">1 line</div>
-                    </div>
+    <div class="sidebar-footer">
+      <button id="theme-toggle" class="nav-item" aria-label="Toggle theme">
+        <i class="ph ph-moon" id="theme-icon"></i><span id="theme-label">Dark Mode</span>
+      </button>
+    </div>
+  </aside>
 
-                    <div class="actions">
-                        <label class="toggle" for="batchToggle">
-                            <input id="batchToggle" type="checkbox">
-                            Analyze each line
-                        </label>
-                        <button class="ghost-button" type="button" id="clearButton">Clear</button>
-                        <button class="ghost-button" type="button" id="copyButton">Copy summary</button>
-                        <button class="primary-button" type="button" id="analyzeButton">Analyze sentiment</button>
-                    </div>
-                </div>
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
 
-                <div class="error-box" id="errorBox"></div>
-            </section>
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="icon-btn sidebar-toggle" id="sidebar-toggle" aria-label="Toggle menu">
+        <i class="ph ph-list"></i>
+      </button>
+      <div class="topbar-title">
+        <h1 id="view-title">Dashboard</h1>
+        <p id="view-date" class="view-subtitle"></p>
+      </div>
+      <div class="topbar-actions">
+        <button id="export-btn" class="btn btn-ghost btn-sm" title="Export tasks">
+          <i class="ph ph-export"></i><span class="btn-label">Export</span>
+        </button>
+        <label class="btn btn-ghost btn-sm" title="Import tasks" for="import-input">
+          <i class="ph ph-import"></i><span class="btn-label">Import</span>
+        </label>
+        <input type="file" id="import-input" accept=".json" hidden />
+        <button id="add-task-btn" class="btn btn-gold">
+          <i class="ph ph-plus"></i><span>New Task</span>
+        </button>
+      </div>
+    </header>
 
-            <section class="dashboard">
-                <article class="card result-hero">
-                    <div class="section-title">
-                        <div>
-                            <h2>Overview</h2>
-                            <p>Confidence, signal strength, and the overall reading of the text.</p>
-                        </div>
-                        <button class="ghost-button" type="button" id="exportButton">Export JSON</button>
-                    </div>
+    <!-- ===== TASKS VIEW ===== -->
+    <section id="view-tasks" class="view active">
 
-                    <div id="overviewContent" class="empty-state">
-                        Run an analysis to see the full breakdown here.
-                    </div>
-                </article>
+      <!-- Stats Row -->
+      <div class="stats-grid">
+        <div class="stat-card" data-accent="gold">
+          <div class="stat-icon"><i class="ph ph-list-checks"></i></div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">Total Tasks</span>
+          </div>
+        </div>
+        <div class="stat-card" data-accent="green">
+          <div class="stat-icon"><i class="ph ph-check-circle"></i></div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-completed">0</span>
+            <span class="stat-label">Completed</span>
+          </div>
+        </div>
+        <div class="stat-card" data-accent="amber">
+          <div class="stat-icon"><i class="ph ph-hourglass-medium"></i></div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-pending">0</span>
+            <span class="stat-label">Pending</span>
+          </div>
+        </div>
+        <div class="stat-card" data-accent="red">
+          <div class="stat-icon"><i class="ph ph-fire"></i></div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-high">0</span>
+            <span class="stat-label">High Priority</span>
+          </div>
+        </div>
+      </div>
 
-                <div class="panel-grid">
-                    <article class="card">
-                        <div class="section-title">
-                            <div>
-                                <h3>Metrics</h3>
-                                <p>Quick signals extracted from the input text.</p>
-                            </div>
-                        </div>
-                        <div id="metricsContent" class="empty-state">Metrics will appear after analysis.</div>
-                    </article>
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="progress-label">Overall Progress</span>
+          <span class="progress-pct" id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
 
-                    <article class="card">
-                        <div class="section-title">
-                            <div>
-                                <h3>Keywords and tone</h3>
-                                <p>Top terms, sentiment triggers, and tonal tags.</p>
-                            </div>
-                        </div>
-                        <div id="keywordsContent" class="empty-state">Keyword signals will appear after analysis.</div>
-                    </article>
-                </div>
+      <!-- Filter / Search Bar -->
+      <div class="filter-bar">
+        <div class="search-wrapper">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" id="search-input" placeholder="Search tasks…" autocomplete="off" />
+          <button id="clear-search" class="clear-btn" hidden aria-label="Clear search"><i class="ph ph-x-circle"></i></button>
+        </div>
 
-                <div class="panel-grid">
-                    <article class="card">
-                        <div class="section-title">
-                            <div>
-                                <h3>Suggestions</h3>
-                                <p>Helpful cues for rewriting or reusing the text.</p>
-                            </div>
-                        </div>
-                        <div id="suggestionsContent" class="empty-state">Suggestions will appear after analysis.</div>
-                    </article>
+        <div class="filter-group">
+          <div class="select-wrapper filter-select">
+            <select id="filter-status">
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+            <i class="ph ph-caret-down select-arrow"></i>
+          </div>
 
-                    <article class="card">
-                        <div class="section-title">
-                            <div>
-                                <h3>Recent analyses</h3>
-                                <p>Stored in your browser for quick reuse.</p>
-                            </div>
-                        </div>
-                        <div id="historyContent" class="empty-state">Your recent runs will show up here.</div>
-                    </article>
-                </div>
+          <div class="select-wrapper filter-select">
+            <select id="filter-priority">
+              <option value="all">All Priority</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+            <i class="ph ph-caret-down select-arrow"></i>
+          </div>
 
-                <article class="card">
-                    <div class="section-title">
-                        <div>
-                            <h3>Sentence and batch breakdown</h3>
-                            <p>See how individual lines or sentences are contributing to the overall result.</p>
-                        </div>
-                    </div>
-                    <div id="breakdownContent" class="empty-state">Detailed breakdown will appear after analysis.</div>
-                </article>
-            </section>
-        </section>
-    </main>
+          <div class="select-wrapper filter-select">
+            <select id="filter-category">
+              <option value="all">All Categories</option>
+              <option value="work">Work</option>
+              <option value="study">Study</option>
+              <option value="personal">Personal</option>
+              <option value="other">Other</option>
+            </select>
+            <i class="ph ph-caret-down select-arrow"></i>
+          </div>
 
-    <script>
-        const BATCH_SAMPLE = [
-            "The checkout flow is smooth and very fast.",
-            "Support replies are slow and often confusing.",
-            "The dashboard looks polished, but pricing still feels unclear."
-        ].join("\n");
+          <div class="select-wrapper filter-select">
+            <select id="sort-tasks">
+              <option value="date-asc">Date ↑</option>
+              <option value="date-desc">Date ↓</option>
+              <option value="priority-high">Priority ↑</option>
+              <option value="priority-low">Priority ↓</option>
+              <option value="alpha">A → Z</option>
+            </select>
+            <i class="ph ph-caret-down select-arrow"></i>
+          </div>
 
-        const textInput = document.getElementById("textInput");
-        const analyzeButton = document.getElementById("analyzeButton");
-        const batchToggle = document.getElementById("batchToggle");
-        const clearButton = document.getElementById("clearButton");
-        const copyButton = document.getElementById("copyButton");
-        const exportButton = document.getElementById("exportButton");
-        const batchExample = document.getElementById("batchExample");
-        const modeBadge = document.getElementById("modeBadge");
-        const errorBox = document.getElementById("errorBox");
-        const engineLabel = document.getElementById("engineLabel");
-        const deployLabel = document.getElementById("deployLabel");
-        const charCount = document.getElementById("charCount");
-        const wordCount = document.getElementById("wordCount");
-        const lineCount = document.getElementById("lineCount");
-        const overviewContent = document.getElementById("overviewContent");
-        const metricsContent = document.getElementById("metricsContent");
-        const keywordsContent = document.getElementById("keywordsContent");
-        const suggestionsContent = document.getElementById("suggestionsContent");
-        const historyContent = document.getElementById("historyContent");
-        const breakdownContent = document.getElementById("breakdownContent");
+          <button id="clear-all-btn" class="btn btn-ghost btn-sm danger-ghost" title="Clear all tasks">
+            <i class="ph ph-trash"></i><span class="btn-label">Clear All</span>
+          </button>
+        </div>
+      </div>
 
-        const state = {
-            lastResponse: null,
-            history: loadHistory()
-        };
+      <!-- Task List -->
+      <div id="task-list" class="task-list" role="list"></div>
+      <div id="empty-state" class="empty-state" hidden>
+        <i class="ph ph-notepad"></i>
+        <p>No tasks found</p>
+        <span>Add a new task or adjust your filters</span>
+      </div>
 
-        function loadHistory() {
-            try {
-                return JSON.parse(localStorage.getItem("sentiment-studio-history") || "[]");
-            } catch (error) {
-                return [];
-            }
-        }
+    </section>
 
-        function saveHistory() {
-            localStorage.setItem("sentiment-studio-history", JSON.stringify(state.history.slice(0, 6)));
-        }
+    <!-- ===== HISTORY VIEW ===== -->
+    <section id="view-history" class="view" hidden>
+      <div class="history-tabs">
+        <button class="history-tab active" data-htab="completed">
+          <i class="ph ph-check-square"></i> Completed
+          <span class="tab-badge" id="badge-completed">0</span>
+        </button>
+        <button class="history-tab" data-htab="deleted">
+          <i class="ph ph-trash"></i> Deleted
+          <span class="tab-badge" id="badge-deleted">0</span>
+        </button>
+      </div>
+      <div id="history-list" class="task-list" role="list"></div>
+      <div id="history-empty" class="empty-state" hidden>
+        <i class="ph ph-archive"></i>
+        <p>Nothing here yet</p>
+        <span>Completed and deleted tasks will appear here</span>
+      </div>
+    </section>
 
-        function updateCounters() {
-            const text = textInput.value;
-            const words = (text.trim().match(/\S+/g) || []).length;
-            const lines = Math.max(1, text.split("\n").length);
-            charCount.textContent = `${text.length} characters`;
-            wordCount.textContent = `${words} words`;
-            lineCount.textContent = `${lines} ${lines === 1 ? "line" : "lines"}`;
-        }
+  </main>
 
-        function setModeBadge() {
-            modeBadge.textContent = `Mode: ${batchToggle.checked ? "batch" : "single"}`;
-        }
-
-        function showError(message) {
-            errorBox.style.display = "block";
-            errorBox.textContent = message;
-        }
-
-        function hideError() {
-            errorBox.style.display = "none";
-            errorBox.textContent = "";
-        }
-
-        function sentimentClass(label) {
-            if (label === "Positive") return "sentiment-positive";
-            if (label === "Negative") return "sentiment-negative";
-            return "sentiment-neutral";
-        }
-
-        function createTags(items) {
-            if (!items || items.length === 0) {
-                return '<div class="empty-state">No strong signals detected for this section.</div>';
-            }
-            return `<div class="list-block">${items.map((item) => `<span class="tag">${item}</span>`).join("")}</div>`;
-        }
-
-        function renderOverview(payload) {
-            const analysis = payload.analysis;
-            const confidenceWidth = Math.max(6, Math.round(analysis.confidence * 100));
-            overviewContent.innerHTML = `
-                <div class="result-top">
-                    <div class="sentiment-title">
-                        <div class="badge">${analysis.emoji}</div>
-                        <h2 class="${sentimentClass(analysis.label)}">${analysis.label}</h2>
-                        <p>${analysis.summary}</p>
-                    </div>
-                    <div class="score-card">
-                        <div class="score-row">
-                            <span class="mono">Score</span>
-                            <strong class="mono">${analysis.score.toFixed(4)}</strong>
-                        </div>
-                        <div class="score-row">
-                            <span class="mono">Confidence</span>
-                            <strong class="mono">${Math.round(analysis.confidence * 100)}%</strong>
-                        </div>
-                        <div class="meter"><span style="width: ${confidenceWidth}%"></span></div>
-                    </div>
-                </div>
-                <div class="stats-row">
-                    <div class="badge">Engine: ${payload.engine.label}</div>
-                    <div class="badge">Mode: ${payload.mode}</div>
-                    <div class="badge">Signal strength: ${Math.round(analysis.magnitude * 100)}%</div>
-                    ${payload.mode === "batch" ? `<div class="badge">Entries: ${payload.count}</div>` : ""}
-                </div>
-            `;
-        }
-
-        function renderMetrics(metrics) {
-            metricsContent.innerHTML = `
-                <div class="metrics-grid">
-                    <div class="metric"><span>Characters</span><strong>${metrics.characters}</strong></div>
-                    <div class="metric"><span>Words</span><strong>${metrics.words}</strong></div>
-                    <div class="metric"><span>Sentences</span><strong>${metrics.sentences}</strong></div>
-                    <div class="metric"><span>Read time</span><strong>${metrics.reading_time_seconds}s</strong></div>
-                    <div class="metric"><span>Exclamation marks</span><strong>${metrics.exclamation_marks}</strong></div>
-                    <div class="metric"><span>Uppercase ratio</span><strong>${metrics.uppercase_ratio}</strong></div>
-                </div>
-            `;
-        }
-
-        function renderKeywords(analysis) {
-            const keywords = analysis.keywords || {};
-            keywordsContent.innerHTML = `
-                <div class="stack">
-                    <div>
-                        <p>Top terms</p>
-                        ${createTags(keywords.top_terms || [])}
-                    </div>
-                    <div>
-                        <p>Positive triggers</p>
-                        ${createTags(keywords.positive || [])}
-                    </div>
-                    <div>
-                        <p>Negative triggers</p>
-                        ${createTags(keywords.negative || [])}
-                    </div>
-                    <div>
-                        <p>Tone tags</p>
-                        ${createTags(analysis.tones || [])}
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderSuggestions(analysis) {
-            if (!analysis.suggestions || analysis.suggestions.length === 0) {
-                suggestionsContent.innerHTML = '<div class="empty-state">No suggestions available for this input.</div>';
-                return;
-            }
-
-            suggestionsContent.innerHTML = `
-                <div class="sentence-list">
-                    ${analysis.suggestions.map((item) => `
-                        <div class="sentence-item">
-                            <p>${item}</p>
-                        </div>
-                    `).join("")}
-                </div>
-            `;
-        }
-
-        function renderBreakdown(payload) {
-            const analysis = payload.analysis;
-            const sentenceBlocks = (analysis.sentence_breakdown || []).map((entry) => `
-                <div class="sentence-item">
-                    <div class="sentence-head">
-                        <strong class="${sentimentClass(entry.label)}">${entry.label}</strong>
-                        <span class="mono">${Math.round(entry.confidence * 100)}%</span>
-                    </div>
-                    <p>${entry.sentence}</p>
-                </div>
-            `).join("");
-
-            const batchBlocks = (payload.entries || []).map((entry, index) => `
-                <div class="sentence-item">
-                    <div class="sentence-head">
-                        <strong>Line ${index + 1}: <span class="${sentimentClass(entry.label)}">${entry.label}</span></strong>
-                        <span class="mono">${entry.score.toFixed(4)}</span>
-                    </div>
-                    <p>${entry.source_text}</p>
-                    <p style="margin-top: 10px;">${entry.summary}</p>
-                </div>
-            `).join("");
-
-            const content = [];
-            if (payload.mode === "batch" && batchBlocks) {
-                content.push(`<div class="stack"><h4>Line-by-line view</h4><div class="sentence-list">${batchBlocks}</div></div>`);
-            }
-            if (sentenceBlocks) {
-                content.push(`<div class="stack"><h4>Sentence-level view</h4><div class="sentence-list">${sentenceBlocks}</div></div>`);
-            }
-
-            breakdownContent.innerHTML = content.length
-                ? content.join("")
-                : '<div class="empty-state">No detailed breakdown available for this input.</div>';
-        }
-
-        function pushHistory(text, payload) {
-            state.history.unshift({
-                fullText: text,
-                preview: text.slice(0, 180),
-                label: payload.analysis.label,
-                score: payload.analysis.score,
-                mode: payload.mode,
-                timestamp: new Date().toLocaleTimeString()
-            });
-            state.history = state.history.slice(0, 6);
-            saveHistory();
-            renderHistory();
-        }
-
-        function renderHistory() {
-            if (state.history.length === 0) {
-                historyContent.innerHTML = '<div class="empty-state">Your recent runs will show up here.</div>';
-                return;
-            }
-
-            historyContent.innerHTML = `
-                <div class="history-list">
-                    ${state.history.map((item, index) => `
-                        <div class="history-item">
-                            <div class="history-head">
-                                <strong class="${sentimentClass(item.label)}">${item.label}</strong>
-                                <span class="mono">${item.score.toFixed(4)}</span>
-                            </div>
-                            <p>${item.preview || item.text}</p>
-                            <div class="section-title" style="margin: 12px 0 0;">
-                                <p>${item.mode} mode • ${item.timestamp}</p>
-                                <button type="button" data-history-index="${index}">Reuse</button>
-                            </div>
-                        </div>
-                    `).join("")}
-                </div>
-            `;
-
-            historyContent.querySelectorAll("[data-history-index]").forEach((button) => {
-                button.addEventListener("click", () => {
-                    const item = state.history[Number(button.dataset.historyIndex)];
-                    textInput.value = item.fullText || item.text || "";
-                    batchToggle.checked = item.mode === "batch";
-                    setModeBadge();
-                    updateCounters();
-                    hideError();
-                });
-            });
-        }
-
-        async function checkHealth() {
-            try {
-                const response = await fetch("/api/health");
-                const payload = await response.json();
-                engineLabel.textContent = payload.engine.label;
-                deployLabel.textContent = payload.engine.deploy_ready
-                    ? "Ready for Vercel deployment"
-                    : "Local transformer mode enabled";
-            } catch (error) {
-                engineLabel.textContent = "Health check unavailable";
-                deployLabel.textContent = "Local preview only";
-            }
-        }
-
-        async function analyzeSentiment() {
-            const text = textInput.value.trim();
-            if (!text) {
-                showError("Please enter some text before running analysis.");
-                return;
-            }
-
-            hideError();
-            analyzeButton.disabled = true;
-            analyzeButton.textContent = "Analyzing...";
-
-            try {
-                const response = await fetch("/api/analyze", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        text,
-                        mode: batchToggle.checked ? "batch" : "single"
-                    })
-                });
-
-                const payload = await response.json();
-                if (!response.ok || !payload.ok) {
-                    throw new Error(payload.error || "Unable to analyze the provided text.");
-                }
-
-                state.lastResponse = payload;
-                renderOverview(payload);
-                renderMetrics(payload.analysis.metrics);
-                renderKeywords(payload.analysis);
-                renderSuggestions(payload.analysis);
-                renderBreakdown(payload);
-                pushHistory(text, payload);
-            } catch (error) {
-                showError(error.message || "Something went wrong while analyzing the text.");
-            } finally {
-                analyzeButton.disabled = false;
-                analyzeButton.textContent = "Analyze sentiment";
-            }
-        }
-
-        async function copySummary() {
-            if (!state.lastResponse) {
-                showError("Run an analysis first, then copy the summary.");
-                return;
-            }
-
-            try {
-                const analysis = state.lastResponse.analysis;
-                const summary = `${analysis.label} sentiment | score ${analysis.score.toFixed(4)} | confidence ${Math.round(analysis.confidence * 100)}% | ${analysis.summary}`;
-                await navigator.clipboard.writeText(summary);
-                hideError();
-                copyButton.textContent = "Copied";
-                setTimeout(() => {
-                    copyButton.textContent = "Copy summary";
-                }, 1200);
-            } catch (error) {
-                showError("Clipboard access is not available in this browser session.");
-            }
-        }
-
-        function exportJson() {
-            if (!state.lastResponse) {
-                showError("Run an analysis before exporting JSON.");
-                return;
-            }
-
-            const blob = new Blob([JSON.stringify(state.lastResponse, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "sentiment-analysis.json";
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            URL.revokeObjectURL(url);
-        }
-
-        document.querySelectorAll(".example-button").forEach((button) => {
-            button.addEventListener("click", () => {
-                textInput.value = button.dataset.example;
-                updateCounters();
-                hideError();
-            });
-        });
-
-        batchExample.addEventListener("click", () => {
-            textInput.value = BATCH_SAMPLE;
-            batchToggle.checked = true;
-            setModeBadge();
-            updateCounters();
-            hideError();
-        });
-
-        batchToggle.addEventListener("change", setModeBadge);
-        textInput.addEventListener("input", updateCounters);
-        analyzeButton.addEventListener("click", analyzeSentiment);
-        clearButton.addEventListener("click", () => {
-            textInput.value = "";
-            updateCounters();
-            hideError();
-        });
-        copyButton.addEventListener("click", copySummary);
-        exportButton.addEventListener("click", exportJson);
-
-        updateCounters();
-        setModeBadge();
-        renderHistory();
-        checkHealth();
-    </script>
+  <script src="script.js"></script>
 </body>
 </html>
