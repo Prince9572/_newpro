@@ -1,11 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Photostudio</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    
+  <!-- Navigation -->
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#home" id="homeBtn">Home</a></li>
+        <li><a href="#gallery" id="galleryBtn">Gallery</a></li>
+        <li><a href="#about" id="aboutBtn">About</a></li>
+        <li><a href="#contact" id="contactBtn">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="hero-content">
+      <h1>Welcome to AI Photostudio</h1>
+      <p>Experience the future of photography with advanced AI enhancements.</p>
+      <button id="exploreBtn" class="btn">Explore Now</button>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="gallery" class="gallery">
+    <h2>Gallery</h2>
+    <div class="gallery-grid">
+      <!-- Sample images (replace with your own images) -->
+      <div class="gallery-item">
+        <img src="https://via.placeholder.com/300" alt="Photo 1" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://via.placeholder.com/300" alt="Photo 2" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://via.placeholder.com/300" alt="Photo 3" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://via.placeholder.com/300" alt="Photo 4" />
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about">
+    <h2>About Us</h2>
+    <p>
+      We combine artificial intelligence with modern photography techniques to deliver stunning and unique images.
+    </p>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <form id="contactForm">
+      <input type="text" placeholder="Your Name" required />
+      <input type="email" placeholder="Your Email" required />
+      <textarea placeholder="Your Message" required></textarea>
+      <button type="submit" class="btn">Send Message</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AI Photostudio. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
