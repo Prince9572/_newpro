@@ -1,278 +1,338 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codehelp da Dhaaba</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="STRATOS — Premium weather intelligence dashboard. Real-time forecasts, AQI, UV index, and smart alerts." />
+  <meta name="theme-color" content="#0a0a1a" />
+  <title>STRATOS — Weather Intelligence</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.svg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    
-    <div class="container">
-        
-        <header>
-            <div class="navContainer">
-                <nav>
-                    <ul id="navList">
-                        <li>
-                            <p id="navLogo">CodeHelp da Dhabba</p>
-                        </li>
-                        <li>
-                            <div id="navItems">
-                                <a href="#">Home</a>
-                                <a href="#">Contact</a>
-                                <a href="#">About</a>
-                            </div>
-                        </li>
-                    </ul>
-                </nav>
+
+  <!-- ══════════════ LOADING SCREEN ══════════════ -->
+  <div id="loader" class="loader" role="status" aria-live="polite">
+    <div class="loader__orb"></div>
+    <div class="loader__orb loader__orb--2"></div>
+    <div class="loader__orb loader__orb--3"></div>
+    <p class="loader__label">STRATOS</p>
+  </div>
+
+  <!-- ══════════════ OFFLINE BANNER ══════════════ -->
+  <div id="offlineBanner" class="offline-banner" hidden>
+    <span>⚠</span> You're offline — showing cached data
+  </div>
+
+  <!-- ══════════════ APP SHELL ══════════════ -->
+  <div class="app" id="app">
+
+    <!-- Dynamic background layers -->
+    <div class="bg-layer bg-layer--primary" id="bgPrimary"></div>
+    <div class="bg-layer bg-layer--mesh" id="bgMesh"></div>
+    <div class="bg-noise"></div>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar" id="sidebar" aria-label="Navigation">
+      <div class="sidebar__brand">
+        <span class="brand-mark">⬡</span>
+        <span class="brand-name">STRATOS</span>
+      </div>
+
+      <nav class="sidebar__nav">
+        <button class="nav-btn active" data-panel="dashboard" aria-label="Dashboard">
+          <span class="nav-icon">◈</span>
+          <span class="nav-label">Dashboard</span>
+        </button>
+        <button class="nav-btn" data-panel="forecast" aria-label="Forecast">
+          <span class="nav-icon">◎</span>
+          <span class="nav-label">Forecast</span>
+        </button>
+        <button class="nav-btn" data-panel="map" aria-label="Map">
+          <span class="nav-icon">◉</span>
+          <span class="nav-label">Map</span>
+        </button>
+        <button class="nav-btn" data-panel="alerts" aria-label="Alerts">
+          <span class="nav-icon">◬</span>
+          <span class="nav-label">Alerts</span>
+          <span class="nav-badge" id="alertBadge" hidden>0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar__bottom">
+        <!-- Theme toggle -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+          <span class="theme-toggle__icon" id="themeIcon">◑</span>
+        </button>
+
+        <!-- Unit toggle -->
+        <button class="unit-toggle" id="unitToggle" aria-label="Toggle temperature unit">
+          <span id="unitLabel">°C</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ══ MAIN ══ -->
+    <main class="main" id="main">
+
+      <!-- ─── TOP BAR ─── -->
+      <header class="topbar" role="banner">
+        <div class="topbar__left">
+          <button class="menu-btn" id="menuBtn" aria-label="Toggle sidebar">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="live-time" id="liveTime" aria-live="polite">
+            <span id="clockTime">--:--</span>
+            <span id="clockDate">--- --, ----</span>
+          </div>
+        </div>
+
+        <div class="topbar__center">
+          <!-- Search -->
+          <div class="search-wrap" role="search">
+            <div class="search-box" id="searchBox">
+              <span class="search-icon" aria-hidden="true">⌕</span>
+              <input
+                type="search"
+                id="searchInput"
+                class="search-input"
+                placeholder="Search city…"
+                autocomplete="off"
+                aria-label="Search for a city"
+                aria-autocomplete="list"
+                aria-controls="suggestions"
+              />
+              <button class="voice-btn" id="voiceBtn" aria-label="Voice search" title="Voice search">
+                <span>♪</span>
+              </button>
+              <button class="locate-btn" id="locateBtn" aria-label="Detect my location" title="Use my location">
+                <span>⊕</span>
+              </button>
             </div>
-        </header>
+            <ul class="suggestions" id="suggestions" role="listbox" aria-label="Search suggestions" hidden></ul>
+          </div>
+        </div>
 
-        <main>
-            <div class="contentBox">
-                <!-- item 1  -->
-                <section>
-                    <div class="item">
-                        <div class="leftBox">
-                            <!-- heaeding -->
-                            <h2>Gulam Jamun</h2>
+        <div class="topbar__right">
+          <button class="fav-btn" id="favCurrentBtn" aria-label="Add to favorites" title="Save to favorites">
+            <span id="favIcon">♡</span>
+          </button>
+          <button class="refresh-btn" id="refreshBtn" aria-label="Refresh weather data" title="Refresh">
+            <span>↻</span>
+          </button>
+        </div>
+      </header>
 
-                            <div>
-                                <h2>Ingredients</h2>
-                                <ul class="ingBox">
-                                    <li>Sugar</li>
-                                    <li>bread</li>
-                                    <li>Oil</li>
-                                </ul>
-                            </div>
-                            
-                            <div>
-                                <h2>Recipe</h2>
-                                <ol class="recipeBox">
-                                    <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque, nesciunt.</li>
-                                    <li>Lorem ipsum dolor sit.</li>
-                                    <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</li>
-                                    <li>Lorem ipsum dolor sit amet, consectetur adipisicing.</li>
-                                </ol>
-                            </div>
+      <!-- ─── PANELS ─── -->
+      <div class="panels">
 
-                            
+        <!-- ══ DASHBOARD PANEL ══ -->
+        <section class="panel panel--active" id="panel-dashboard" aria-label="Current weather dashboard">
 
-                        </div>
-
-                        <div class="rightBox">
-                            <img 
-                                src="bread-gulab-jamun-recipe.jpg"
-                            />
-                            <div class="overlay">
-                                <span> Click here to Buy</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <div class="item">
-                        <div class="leftBox">
-                            <!-- heaeding -->
-                            <h2>Barfi Jamun</h2>
-
-                            <div>
-                                <h2>Ingredients</h2>
-                                <ul>
-                                    <li>Sugar</li>
-                                    <li>bread</li>
-                                    <li>Oil</li>
-                                </ul>
-                            </div>
-                            
-                            <div>
-                                <h2>Recipe</h2>
-                                <ol>
-                                    <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque, nesciunt.</li>
-                                    <li>Lorem ipsum dolor sit.</li>
-                                    <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</li>
-                                    <li>Lorem ipsum dolor sit amet, consectetur adipisicing.</li>
-                                </ol>
-                            </div>
-
-                            
-
-                        </div>
-                        <div class="rightBox">
-                            <img 
-                                src="Magaz-5-of-5-2-960x1440.jpg"
-                            />
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <div class="item">
-                        <div class="leftBox">
-                            <!-- heaeding -->
-                            <h2>Gulam Jamun</h2>
-
-                            <div>
-                                <h2>Ingredients</h2>
-                                <ul class="ingBox">
-                                    <li>Sugar</li>
-                                    <li>bread</li>
-                                    <li>Oil</li>
-                                </ul>
-                            </div>
-                            
-                            <div>
-                                <h2>Recipe</h2>
-                                <ol class="recipeBox">
-                                    <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque, nesciunt.</li>
-                                    <li>Lorem ipsum dolor sit.</li>
-                                    <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</li>
-                                    <li>Lorem ipsum dolor sit amet, consectetur adipisicing.</li>
-                                </ol>
-                            </div>
-
-                            
-
-                        </div>
-
-                        <div class="rightBox">
-                            <img 
-                                src="bread-gulab-jamun-recipe.jpg"
-                            />
-                            <div class="overlay">
-                                <span> Click here to Buy</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <div class="item">
-                        <div class="leftBox">
-                            <!-- heaeding -->
-                            <h2>Barfi Jamun</h2>
-
-                            <div>
-                                <h2>Ingredients</h2>
-                                <ul>
-                                    <li>Sugar</li>
-                                    <li>bread</li>
-                                    <li>Oil</li>
-                                </ul>
-                            </div>
-                            
-                            <div>
-                                <h2>Recipe</h2>
-                                <ol>
-                                    <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque, nesciunt.</li>
-                                    <li>Lorem ipsum dolor sit.</li>
-                                    <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</li>
-                                    <li>Lorem ipsum dolor sit amet, consectetur adipisicing.</li>
-                                </ol>
-                            </div>
-
-                            
-
-                        </div>
-                        <div class="rightBox">
-                            <img 
-                                src="Magaz-5-of-5-2-960x1440.jpg"
-                            />
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <div class="item">
-                        <div class="leftBox">
-                            <!-- heaeding -->
-                            <h2>Gulam Jamun</h2>
-
-                            <div>
-                                <h2>Ingredients</h2>
-                                <ul class="ingBox">
-                                    <li>Sugar</li>
-                                    <li>bread</li>
-                                    <li>Oil</li>
-                                </ul>
-                            </div>
-                            
-                            <div>
-                                <h2>Recipe</h2>
-                                <ol class="recipeBox">
-                                    <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque, nesciunt.</li>
-                                    <li>Lorem ipsum dolor sit.</li>
-                                    <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</li>
-                                    <li>Lorem ipsum dolor sit amet, consectetur adipisicing.</li>
-                                </ol>
-                            </div>
-
-                            
-
-                        </div>
-
-                        <div class="rightBox">
-                            <img 
-                                src="bread-gulab-jamun-recipe.jpg"
-                            />
-                            <div class="overlay">
-                                <span> Click here to Buy</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <div class="item">
-                        <div class="leftBox">
-                            <!-- heaeding -->
-                            <h2>Barfi Jamun</h2>
-
-                            <div>
-                                <h2>Ingredients</h2>
-                                <ul>
-                                    <li>Sugar</li>
-                                    <li>bread</li>
-                                    <li>Oil</li>
-                                </ul>
-                            </div>
-                            
-                            <div>
-                                <h2>Recipe</h2>
-                                <ol>
-                                    <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque, nesciunt.</li>
-                                    <li>Lorem ipsum dolor sit.</li>
-                                    <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</li>
-                                    <li>Lorem ipsum dolor sit amet, consectetur adipisicing.</li>
-                                </ol>
-                            </div>
-
-                            
-
-                        </div>
-                        <div class="rightBox">
-                            <img 
-                                src="Magaz-5-of-5-2-960x1440.jpg"
-                            />
-                        </div>
-                    </div>
-                </section>
+          <!-- Hero weather card -->
+          <div class="hero-card glass" id="heroCard">
+            <!-- Skeleton overlay -->
+            <div class="skeleton-overlay" id="heroSkeleton">
+              <div class="sk sk--title"></div>
+              <div class="sk sk--subtitle"></div>
+              <div class="sk sk--temp"></div>
+              <div class="sk sk--row">
+                <div class="sk sk--chip"></div>
+                <div class="sk sk--chip"></div>
+                <div class="sk sk--chip"></div>
+              </div>
             </div>
-        </main>
 
-        <footer>
-           <div class="footerBox">
-                <p>
-                    Copyright  &copy; CodeHelp da Dhaaba Pvt Ltd 2023 All Rights Reserved
-                </p>
-           </div>
-        </footer>
+            <div class="hero-card__content" id="heroContent" hidden>
+              <div class="hero-card__left">
+                <div class="hero-location">
+                  <span class="hero-city" id="heroCity">—</span>
+                  <span class="hero-country" id="heroCountry"></span>
+                </div>
+                <div class="hero-temp-wrap">
+                  <span class="hero-temp" id="heroTemp">—</span>
+                  <span class="hero-unit">°</span>
+                </div>
+                <div class="hero-condition" id="heroCondition">—</div>
+                <div class="hero-feels">
+                  Feels like <span id="heroFeels">—</span> ·
+                  <span id="heroHigh">H:—</span> / <span id="heroLow">L:—</span>
+                </div>
+              </div>
+              <div class="hero-card__right">
+                <div class="weather-icon-wrap" id="weatherIconWrap">
+                  <canvas class="weather-canvas" id="weatherCanvas" width="160" height="160" aria-hidden="true"></canvas>
+                </div>
+                <div class="sun-times">
+                  <div class="sun-item">
+                    <span class="sun-lbl">↑ Sunrise</span>
+                    <span class="sun-val" id="heroSunrise">—</span>
+                  </div>
+                  <div class="sun-divider"></div>
+                  <div class="sun-item">
+                    <span class="sun-lbl">↓ Sunset</span>
+                    <span class="sun-val" id="heroSunset">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <!-- Stats row -->
+          <div class="stats-grid" id="statsGrid">
+            <div class="stat-card glass sk-card" id="statHumidity">
+              <div class="stat-card__icon">💧</div>
+              <div class="stat-card__body">
+                <div class="stat-value" id="statHumidityVal">—</div>
+                <div class="stat-label">Humidity</div>
+              </div>
+              <div class="stat-bar"><div class="stat-bar__fill" id="humidityBar"></div></div>
+            </div>
+            <div class="stat-card glass sk-card" id="statWind">
+              <div class="stat-card__icon">💨</div>
+              <div class="stat-card__body">
+                <div class="stat-value" id="statWindVal">—</div>
+                <div class="stat-label">Wind Speed</div>
+              </div>
+              <div class="wind-dir" id="windDir">↑</div>
+            </div>
+            <div class="stat-card glass sk-card" id="statPressure">
+              <div class="stat-card__icon">⊡</div>
+              <div class="stat-card__body">
+                <div class="stat-value" id="statPressureVal">—</div>
+                <div class="stat-label">Pressure</div>
+              </div>
+            </div>
+            <div class="stat-card glass sk-card" id="statVisibility">
+              <div class="stat-card__icon">◎</div>
+              <div class="stat-card__body">
+                <div class="stat-value" id="statVisibilityVal">—</div>
+                <div class="stat-label">Visibility</div>
+              </div>
+            </div>
+            <div class="stat-card glass sk-card" id="statUV">
+              <div class="stat-card__icon">☀</div>
+              <div class="stat-card__body">
+                <div class="stat-value" id="statUVVal">—</div>
+                <div class="stat-label">UV Index</div>
+              </div>
+              <div class="uv-bar">
+                <div class="uv-fill" id="uvFill"></div>
+                <span class="uv-label" id="uvLabel">—</span>
+              </div>
+            </div>
+            <div class="stat-card glass sk-card" id="statAQI">
+              <div class="stat-card__icon">◈</div>
+              <div class="stat-card__body">
+                <div class="stat-value" id="statAQIVal">—</div>
+                <div class="stat-label">Air Quality</div>
+              </div>
+              <div class="aqi-label" id="aqiLabel">—</div>
+            </div>
+          </div>
 
-    </div>
+          <!-- Hourly forecast + chart row -->
+          <div class="bottom-row">
+            <div class="hourly-wrap glass">
+              <h2 class="section-title">Hourly Forecast</h2>
+              <div class="hourly-scroll" id="hourlyScroll" role="list">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+            <div class="chart-wrap glass">
+              <h2 class="section-title">24h Temperature</h2>
+              <canvas id="tempChart" aria-label="24-hour temperature chart" role="img"></canvas>
+            </div>
+          </div>
 
+        </section>
+
+        <!-- ══ FORECAST PANEL ══ -->
+        <section class="panel" id="panel-forecast" aria-label="7-day forecast" hidden>
+          <h2 class="panel-title">7-Day Forecast</h2>
+          <div class="forecast-list" id="forecastList" role="list">
+            <!-- Populated by JS -->
+          </div>
+          <div class="rain-chart-wrap glass">
+            <h2 class="section-title">Precipitation Probability</h2>
+            <canvas id="rainChart" aria-label="Precipitation probability chart" role="img"></canvas>
+          </div>
+        </section>
+
+        <!-- ══ MAP PANEL ══ -->
+        <section class="panel" id="panel-map" aria-label="Weather map" hidden>
+          <h2 class="panel-title">Weather Map</h2>
+          <div class="map-container glass" id="mapContainer">
+            <iframe
+              id="weatherMap"
+              class="weather-map"
+              title="OpenWeatherMap"
+              loading="lazy"
+              src=""
+              allowfullscreen
+            ></iframe>
+            <div class="map-placeholder" id="mapPlaceholder">
+              <span>⊕</span>
+              <p>Search a city to load the map</p>
+            </div>
+          </div>
+          <div class="map-layers">
+            <button class="layer-btn active" data-layer="temp_new">Temperature</button>
+            <button class="layer-btn" data-layer="precipitation_new">Precipitation</button>
+            <button class="layer-btn" data-layer="clouds_new">Clouds</button>
+            <button class="layer-btn" data-layer="wind_new">Wind</button>
+          </div>
+        </section>
+
+        <!-- ══ ALERTS PANEL ══ -->
+        <section class="panel" id="panel-alerts" aria-label="Weather alerts" hidden>
+          <h2 class="panel-title">Weather Alerts</h2>
+          <div id="alertsList" class="alerts-list">
+            <div class="no-alerts">
+              <span>✓</span>
+              <p>No active weather alerts for this area</p>
+            </div>
+          </div>
+
+          <div class="fav-section">
+            <h2 class="panel-title">Favorite Cities</h2>
+            <div class="fav-grid" id="favGrid">
+              <p class="fav-empty" id="favEmpty">No favorites yet. Star a city to save it.</p>
+            </div>
+          </div>
+
+          <div class="history-section">
+            <h2 class="panel-title">Recent Searches</h2>
+            <div class="history-list" id="historyList"></div>
+          </div>
+        </section>
+
+      </div><!-- /panels -->
+
+    </main><!-- /main -->
+
+  </div><!-- /app -->
+
+  <!-- ══ ERROR TOAST ══ -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive" hidden>
+    <span id="toastIcon">⚠</span>
+    <span id="toastMsg">Something went wrong</span>
+    <button class="toast-close" id="toastClose" aria-label="Dismiss">✕</button>
+  </div>
+
+  <!-- Modules -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
