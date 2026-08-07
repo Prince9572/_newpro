@@ -1,0 +1,42 @@
+Experiment 32: PROLOG Knowledge Representation Programs
+
+Program 1: Categorize Animal Characteristics
+
+    % Facts
+    animal(mammal, dog).
+    animal(mammal, cat).
+    animal(bird, sparrow).
+    animal(fish, shark).
+    animal(reptile, snake).
+
+    % Rules
+    has_hair(X) :- animal(mammal, X).
+    lays_eggs(X) :- animal(bird, X); animal(reptile, X); animal(fish, X).
+
+    % Queries
+    % ?- has_hair(dog).
+    % ?- lays_eggs(sparrow).
+
+Output: ?- has_hair(dog). true.
+
+?- lays_eggs(sparrow). true.
+
+Program 2: Knowledge Representation – Plant Classification
+
+    % Facts
+    plant(flowering, rose).
+    plant(flowering, sunflower).
+    plant(non_flowering, fern).
+    plant(non_flowering, moss).
+
+    % Rules
+    needs_pollination(X) :- plant(flowering, X).
+    reproduces_by_spores(X) :- plant(non_flowering, X).
+
+    % Queries
+    % ?- needs_pollination(rose).
+    % ?- reproduces_by_spores(moss).
+
+Output: ?- needs_pollination(rose). true.
+
+?- reproduces_by_spores(moss). true.
