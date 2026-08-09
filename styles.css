@@ -1,0 +1,151 @@
+body {
+    background-color: #f4f6f9;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    text-align: center;
+    background: #1e3a8a;
+    color: white;
+    padding: 20px;
+}
+
+/* Navigation using Flexbox */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    background: white;
+    padding: 15px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #1e3a8a;
+    font-weight: bold;
+}
+
+/* Main container */
+.container {
+    padding: 20px;
+}
+
+/* Welcome message */
+.welcome-message {
+    color: #333;
+}
+
+/* Two-column Grid */
+.event-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Event cards */
+.event-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s;
+}
+
+/* Hover effect */
+.event-card:hover {
+    transform: scale(1.05);
+}
+
+/* Registration section */
+#registration {
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Form layout */
+#registrationForm {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels */
+label {
+    margin-top: 10px;
+}
+
+/* Form controls */
+input,
+select,
+button {
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Submit button */
+button {
+    background: #1e3a8a;
+    color: white;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+/* Fee and status messages */
+#feeDisplay {
+    font-weight: bold;
+}
+
+#statusMessage {
+    font-weight: bold;
+}
+
+/* Registration fee table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+th,
+td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: left;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #1e3a8a;
+    color: white;
+    margin-top: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .event-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .event-card {
+        margin: 5px;
+    }
+}

@@ -1,338 +1,124 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="STRATOS — Premium weather intelligence dashboard. Real-time forecasts, AQI, UV index, and smart alerts." />
-  <meta name="theme-color" content="#0a0a1a" />
-  <title>STRATOS — Weather Intelligence</title>
+    <meta charset="UTF-8">
+    <meta name="author" content="Pranay Patil">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="assets/icons/icon-192.svg" />
+    <link rel="stylesheet" href="styles.css">
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
-
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
-
-  <link rel="stylesheet" href="style.css" />
+    <title>Technoutsav 2026</title>
 </head>
+
 <body>
 
-  <!-- ══════════════ LOADING SCREEN ══════════════ -->
-  <div id="loader" class="loader" role="status" aria-live="polite">
-    <div class="loader__orb"></div>
-    <div class="loader__orb loader__orb--2"></div>
-    <div class="loader__orb loader__orb--3"></div>
-    <p class="loader__label">STRATOS</p>
-  </div>
+<header>
+    <h1>Technoutsav 2026</h1>
+    <p>Annual Technical Fest</p>
+</header>
 
-  <!-- ══════════════ OFFLINE BANNER ══════════════ -->
-  <div id="offlineBanner" class="offline-banner" hidden>
-    <span>⚠</span> You're offline — showing cached data
-  </div>
+<!-- Navigation Menu -->
+<nav>
+    <a href="#">Home</a>
+    <a href="#">Events</a>
+    <a href="#">Schedule</a>
+    <a href="#">Contact</a>
+</nav>
 
-  <!-- ══════════════ APP SHELL ══════════════ -->
-  <div class="app" id="app">
+<div class="container">
 
-    <!-- Dynamic background layers -->
-    <div class="bg-layer bg-layer--primary" id="bgPrimary"></div>
-    <div class="bg-layer bg-layer--mesh" id="bgMesh"></div>
-    <div class="bg-noise"></div>
+    <h2>Welcome to Technoutsav 2026</h2>
 
-    <!-- ══ SIDEBAR ══ -->
-    <aside class="sidebar" id="sidebar" aria-label="Navigation">
-      <div class="sidebar__brand">
-        <span class="brand-mark">⬡</span>
-        <span class="brand-name">STRATOS</span>
-      </div>
+    <p class="welcome-message">
+        Join us for an exciting journey of innovation, coding, and creativity!
+    </p>
 
-      <nav class="sidebar__nav">
-        <button class="nav-btn active" data-panel="dashboard" aria-label="Dashboard">
-          <span class="nav-icon">◈</span>
-          <span class="nav-label">Dashboard</span>
-        </button>
-        <button class="nav-btn" data-panel="forecast" aria-label="Forecast">
-          <span class="nav-icon">◎</span>
-          <span class="nav-label">Forecast</span>
-        </button>
-        <button class="nav-btn" data-panel="map" aria-label="Map">
-          <span class="nav-icon">◉</span>
-          <span class="nav-label">Map</span>
-        </button>
-        <button class="nav-btn" data-panel="alerts" aria-label="Alerts">
-          <span class="nav-icon">◬</span>
-          <span class="nav-label">Alerts</span>
-          <span class="nav-badge" id="alertBadge" hidden>0</span>
-        </button>
-      </nav>
+    <!-- Event Cards -->
+    <div class="event-grid">
 
-      <div class="sidebar__bottom">
-        <!-- Theme toggle -->
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
-          <span class="theme-toggle__icon" id="themeIcon">◑</span>
-        </button>
-
-        <!-- Unit toggle -->
-        <button class="unit-toggle" id="unitToggle" aria-label="Toggle temperature unit">
-          <span id="unitLabel">°C</span>
-        </button>
-      </div>
-    </aside>
-
-    <!-- ══ MAIN ══ -->
-    <main class="main" id="main">
-
-      <!-- ─── TOP BAR ─── -->
-      <header class="topbar" role="banner">
-        <div class="topbar__left">
-          <button class="menu-btn" id="menuBtn" aria-label="Toggle sidebar">
-            <span></span><span></span><span></span>
-          </button>
-          <div class="live-time" id="liveTime" aria-live="polite">
-            <span id="clockTime">--:--</span>
-            <span id="clockDate">--- --, ----</span>
-          </div>
+        <div class="event-card">
+            <h3>Coding Competition</h3>
+            <p>Test your programming skills.</p>
         </div>
 
-        <div class="topbar__center">
-          <!-- Search -->
-          <div class="search-wrap" role="search">
-            <div class="search-box" id="searchBox">
-              <span class="search-icon" aria-hidden="true">⌕</span>
-              <input
-                type="search"
-                id="searchInput"
-                class="search-input"
-                placeholder="Search city…"
-                autocomplete="off"
-                aria-label="Search for a city"
-                aria-autocomplete="list"
-                aria-controls="suggestions"
-              />
-              <button class="voice-btn" id="voiceBtn" aria-label="Voice search" title="Voice search">
-                <span>♪</span>
-              </button>
-              <button class="locate-btn" id="locateBtn" aria-label="Detect my location" title="Use my location">
-                <span>⊕</span>
-              </button>
-            </div>
-            <ul class="suggestions" id="suggestions" role="listbox" aria-label="Search suggestions" hidden></ul>
-          </div>
+        <div class="event-card">
+            <h3>Hackathon</h3>
+            <p>Build innovative solutions in 24 hours.</p>
         </div>
 
-        <div class="topbar__right">
-          <button class="fav-btn" id="favCurrentBtn" aria-label="Add to favorites" title="Save to favorites">
-            <span id="favIcon">♡</span>
-          </button>
-          <button class="refresh-btn" id="refreshBtn" aria-label="Refresh weather data" title="Refresh">
-            <span>↻</span>
-          </button>
+        <div class="event-card">
+            <h3>Robotics Challenge</h3>
+            <p>Build and control autonomous robots.</p>
         </div>
-      </header>
 
-      <!-- ─── PANELS ─── -->
-      <div class="panels">
+    </div>
 
-        <!-- ══ DASHBOARD PANEL ══ -->
-        <section class="panel panel--active" id="panel-dashboard" aria-label="Current weather dashboard">
+    <!-- Event Registration Section -->
+    <section id="registration">
 
-          <!-- Hero weather card -->
-          <div class="hero-card glass" id="heroCard">
-            <!-- Skeleton overlay -->
-            <div class="skeleton-overlay" id="heroSkeleton">
-              <div class="sk sk--title"></div>
-              <div class="sk sk--subtitle"></div>
-              <div class="sk sk--temp"></div>
-              <div class="sk sk--row">
-                <div class="sk sk--chip"></div>
-                <div class="sk sk--chip"></div>
-                <div class="sk sk--chip"></div>
-              </div>
-            </div>
+        <h2>Event Registration</h2>
 
-            <div class="hero-card__content" id="heroContent" hidden>
-              <div class="hero-card__left">
-                <div class="hero-location">
-                  <span class="hero-city" id="heroCity">—</span>
-                  <span class="hero-country" id="heroCountry"></span>
-                </div>
-                <div class="hero-temp-wrap">
-                  <span class="hero-temp" id="heroTemp">—</span>
-                  <span class="hero-unit">°</span>
-                </div>
-                <div class="hero-condition" id="heroCondition">—</div>
-                <div class="hero-feels">
-                  Feels like <span id="heroFeels">—</span> ·
-                  <span id="heroHigh">H:—</span> / <span id="heroLow">L:—</span>
-                </div>
-              </div>
-              <div class="hero-card__right">
-                <div class="weather-icon-wrap" id="weatherIconWrap">
-                  <canvas class="weather-canvas" id="weatherCanvas" width="160" height="160" aria-hidden="true"></canvas>
-                </div>
-                <div class="sun-times">
-                  <div class="sun-item">
-                    <span class="sun-lbl">↑ Sunrise</span>
-                    <span class="sun-val" id="heroSunrise">—</span>
-                  </div>
-                  <div class="sun-divider"></div>
-                  <div class="sun-item">
-                    <span class="sun-lbl">↓ Sunset</span>
-                    <span class="sun-val" id="heroSunset">—</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <form id="registrationForm">
 
-          <!-- Stats row -->
-          <div class="stats-grid" id="statsGrid">
-            <div class="stat-card glass sk-card" id="statHumidity">
-              <div class="stat-card__icon">💧</div>
-              <div class="stat-card__body">
-                <div class="stat-value" id="statHumidityVal">—</div>
-                <div class="stat-label">Humidity</div>
-              </div>
-              <div class="stat-bar"><div class="stat-bar__fill" id="humidityBar"></div></div>
-            </div>
-            <div class="stat-card glass sk-card" id="statWind">
-              <div class="stat-card__icon">💨</div>
-              <div class="stat-card__body">
-                <div class="stat-value" id="statWindVal">—</div>
-                <div class="stat-label">Wind Speed</div>
-              </div>
-              <div class="wind-dir" id="windDir">↑</div>
-            </div>
-            <div class="stat-card glass sk-card" id="statPressure">
-              <div class="stat-card__icon">⊡</div>
-              <div class="stat-card__body">
-                <div class="stat-value" id="statPressureVal">—</div>
-                <div class="stat-label">Pressure</div>
-              </div>
-            </div>
-            <div class="stat-card glass sk-card" id="statVisibility">
-              <div class="stat-card__icon">◎</div>
-              <div class="stat-card__body">
-                <div class="stat-value" id="statVisibilityVal">—</div>
-                <div class="stat-label">Visibility</div>
-              </div>
-            </div>
-            <div class="stat-card glass sk-card" id="statUV">
-              <div class="stat-card__icon">☀</div>
-              <div class="stat-card__body">
-                <div class="stat-value" id="statUVVal">—</div>
-                <div class="stat-label">UV Index</div>
-              </div>
-              <div class="uv-bar">
-                <div class="uv-fill" id="uvFill"></div>
-                <span class="uv-label" id="uvLabel">—</span>
-              </div>
-            </div>
-            <div class="stat-card glass sk-card" id="statAQI">
-              <div class="stat-card__icon">◈</div>
-              <div class="stat-card__body">
-                <div class="stat-value" id="statAQIVal">—</div>
-                <div class="stat-label">Air Quality</div>
-              </div>
-              <div class="aqi-label" id="aqiLabel">—</div>
-            </div>
-          </div>
+            <label for="name">Participant Name:</label>
+            <input type="text" id="name">
 
-          <!-- Hourly forecast + chart row -->
-          <div class="bottom-row">
-            <div class="hourly-wrap glass">
-              <h2 class="section-title">Hourly Forecast</h2>
-              <div class="hourly-scroll" id="hourlyScroll" role="list">
-                <!-- Populated by JS -->
-              </div>
-            </div>
-            <div class="chart-wrap glass">
-              <h2 class="section-title">24h Temperature</h2>
-              <canvas id="tempChart" aria-label="24-hour temperature chart" role="img"></canvas>
-            </div>
-          </div>
+            <label for="email">Email Address:</label>
+            <input type="email" id="email">
 
-        </section>
+            <label for="event">Event:</label>
+            <select id="event">
+                <option value="">Select Event</option>
+                <option value="coding">Coding Competition</option>
+                <option value="hackathon">Hackathon</option>
+                <option value="robotics">Robotics Challenge</option>
+            </select>
 
-        <!-- ══ FORECAST PANEL ══ -->
-        <section class="panel" id="panel-forecast" aria-label="7-day forecast" hidden>
-          <h2 class="panel-title">7-Day Forecast</h2>
-          <div class="forecast-list" id="forecastList" role="list">
-            <!-- Populated by JS -->
-          </div>
-          <div class="rain-chart-wrap glass">
-            <h2 class="section-title">Precipitation Probability</h2>
-            <canvas id="rainChart" aria-label="Precipitation probability chart" role="img"></canvas>
-          </div>
-        </section>
+            <button type="submit">Submit</button>
 
-        <!-- ══ MAP PANEL ══ -->
-        <section class="panel" id="panel-map" aria-label="Weather map" hidden>
-          <h2 class="panel-title">Weather Map</h2>
-          <div class="map-container glass" id="mapContainer">
-            <iframe
-              id="weatherMap"
-              class="weather-map"
-              title="OpenWeatherMap"
-              loading="lazy"
-              src=""
-              allowfullscreen
-            ></iframe>
-            <div class="map-placeholder" id="mapPlaceholder">
-              <span>⊕</span>
-              <p>Search a city to load the map</p>
-            </div>
-          </div>
-          <div class="map-layers">
-            <button class="layer-btn active" data-layer="temp_new">Temperature</button>
-            <button class="layer-btn" data-layer="precipitation_new">Precipitation</button>
-            <button class="layer-btn" data-layer="clouds_new">Clouds</button>
-            <button class="layer-btn" data-layer="wind_new">Wind</button>
-          </div>
-        </section>
+        </form>
 
-        <!-- ══ ALERTS PANEL ══ -->
-        <section class="panel" id="panel-alerts" aria-label="Weather alerts" hidden>
-          <h2 class="panel-title">Weather Alerts</h2>
-          <div id="alertsList" class="alerts-list">
-            <div class="no-alerts">
-              <span>✓</span>
-              <p>No active weather alerts for this area</p>
-            </div>
-          </div>
+        <p id="feeDisplay"></p>
+        <p id="statusMessage"></p>
 
-          <div class="fav-section">
-            <h2 class="panel-title">Favorite Cities</h2>
-            <div class="fav-grid" id="favGrid">
-              <p class="fav-empty" id="favEmpty">No favorites yet. Star a city to save it.</p>
-            </div>
-          </div>
+    </section>
 
-          <div class="history-section">
-            <h2 class="panel-title">Recent Searches</h2>
-            <div class="history-list" id="historyList"></div>
-          </div>
-        </section>
+    <!-- Registration Fees -->
+    <section id="fees">
 
-      </div><!-- /panels -->
+        <h2>Registration Fees</h2>
 
-    </main><!-- /main -->
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Registration Fee</th>
+            </tr>
 
-  </div><!-- /app -->
+            <tr>
+                <td>Coding Competition</td>
+                <td>200 INR</td>
+            </tr>
 
-  <!-- ══ ERROR TOAST ══ -->
-  <div class="toast" id="toast" role="alert" aria-live="assertive" hidden>
-    <span id="toastIcon">⚠</span>
-    <span id="toastMsg">Something went wrong</span>
-    <button class="toast-close" id="toastClose" aria-label="Dismiss">✕</button>
-  </div>
+            <tr>
+                <td>Hackathon</td>
+                <td>500 INR</td>
+            </tr>
 
-  <!-- Modules -->
-  <script type="module" src="script.js"></script>
+            <tr>
+                <td>Robotics Challenge</td>
+                <td>300 INR</td>
+            </tr>
+        </table>
+
+    </section>
+
+</div>
+
+<footer>
+    2026 Technoutsav | All Rights Reserved
+</footer>
+
+<script src="script.js"></script>
+
 </body>
 </html>
