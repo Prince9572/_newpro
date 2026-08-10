@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Users, Lawyers, Appointments)
+  postgres:
+    image: postgres:15-alpine
+    container_name: nyaysetu_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: nyay_user
+      POSTGRES_PASSWORD: nyay_password_2026
+      POSTGRES_DB: nyaysetu_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # MongoDB Document Store (Chat Sessions & RAG Metadata)
+  mongodb:
+    image: mongo:6-jammy
+    container_name: nyaysetu_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # Redis Cache & Rate Limiter
+  redis:
+    image: redis:7-alpine
+    container_name: nyaysetu_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  # FastAPI Backend API Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nyaysetu_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=production
+      - POSTGRES_URI=postgresql://nyay_user:nyay_password_2026@postgres:5432/nyaysetu_db
+      - MONGODB_URI=mongodb://mongodb:27017/nyaysetu_db
+      - REDIS_URI=redis://redis:6379/0
+      - LLM_PROVIDER=openai
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+
+  # React / Next.js Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nyaysetu_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  mongo_data:
