@@ -1,124 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="author" content="Pranay Patil">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="styles.css">
-
-    <title>Technoutsav 2026</title>
-</head>
-
-<body>
-
-<header>
-    <h1>Technoutsav 2026</h1>
-    <p>Annual Technical Fest</p>
-</header>
-
-<!-- Navigation Menu -->
-<nav>
-    <a href="#">Home</a>
-    <a href="#">Events</a>
-    <a href="#">Schedule</a>
-    <a href="#">Contact</a>
-</nav>
-
-<div class="container">
-
-    <h2>Welcome to Technoutsav 2026</h2>
-
-    <p class="welcome-message">
-        Join us for an exciting journey of innovation, coding, and creativity!
-    </p>
-
-    <!-- Event Cards -->
-    <div class="event-grid">
-
-        <div class="event-card">
-            <h3>Coding Competition</h3>
-            <p>Test your programming skills.</p>
-        </div>
-
-        <div class="event-card">
-            <h3>Hackathon</h3>
-            <p>Build innovative solutions in 24 hours.</p>
-        </div>
-
-        <div class="event-card">
-            <h3>Robotics Challenge</h3>
-            <p>Build and control autonomous robots.</p>
-        </div>
-
-    </div>
-
-    <!-- Event Registration Section -->
-    <section id="registration">
-
-        <h2>Event Registration</h2>
-
-        <form id="registrationForm">
-
-            <label for="name">Participant Name:</label>
-            <input type="text" id="name">
-
-            <label for="email">Email Address:</label>
-            <input type="email" id="email">
-
-            <label for="event">Event:</label>
-            <select id="event">
-                <option value="">Select Event</option>
-                <option value="coding">Coding Competition</option>
-                <option value="hackathon">Hackathon</option>
-                <option value="robotics">Robotics Challenge</option>
-            </select>
-
-            <button type="submit">Submit</button>
-
-        </form>
-
-        <p id="feeDisplay"></p>
-        <p id="statusMessage"></p>
-
-    </section>
-
-    <!-- Registration Fees -->
-    <section id="fees">
-
-        <h2>Registration Fees</h2>
-
-        <table>
-            <tr>
-                <th>Event</th>
-                <th>Registration Fee</th>
-            </tr>
-
-            <tr>
-                <td>Coding Competition</td>
-                <td>200 INR</td>
-            </tr>
-
-            <tr>
-                <td>Hackathon</td>
-                <td>500 INR</td>
-            </tr>
-
-            <tr>
-                <td>Robotics Challenge</td>
-                <td>300 INR</td>
-            </tr>
-        </table>
-
-    </section>
-
-</div>
-
-<footer>
-    2026 Technoutsav | All Rights Reserved
-</footer>
-
-<script src="script.js"></script>
-
-</body>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NyaySetu – AI Legal Assistant for Indian Law</title>
+    <meta name="description" content="AI Legal Assistant for Indian Law (BNS 2023, BNSS 2023, IPC, Cyber, Consumer, Labour). Real-time streaming RAG chatbot, document risk scanner, document generator, lawyer directory." />
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#0B0F19] text-slate-100 font-sans antialiased min-h-screen selection:bg-indigo-500 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
