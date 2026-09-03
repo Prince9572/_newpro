@@ -1,60 +1,40 @@
-# VibeBox
+# Prince Kumar — Portfolio
 
-A premium AI-powered entertainment assistant with mood-based recommendations. Built with Next.js, TypeScript, and Tailwind CSS.
+A simple, static portfolio site (no build step) — plain HTML, CSS, and JS.
 
-## Features
+## Files
+- `index.html` — page content
+- `style.css` — styling (dark theme by default, light toggle in the top-right)
+- `script.js` — theme toggle + small terminal typing effect
+- `images/profile.png` — your photo
 
-- **Mood-based AI recommendations** — Select from 8 moods to get personalized content picks
-- **Multi-format content** — Music, movies, series, and podcasts in one place
-- **Personal library** — Save favorites with persistent storage
-- **Smart search** — Find content by title, artist, or genre
-- **Full customization** — Accent colors, display density, genre preferences, playback settings
-- **Premium UI** — Dark theme inspired by Spotify, Netflix, and Apple Music
-- **Accessible** — Skip links, ARIA labels, keyboard navigation, focus states
-
-## Getting Started
-
-```bash
-npm install
-npm run dev
+## Run locally
+Just open `index.html` in a browser, or serve it:
+```
+npx serve .
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+## Deploy: GitHub → Vercel
 
-## Pages
-
-| Page | Purpose |
-|------|---------|
-| **Home** | Personalized dashboard with mood selector and recommendations |
-| **Discover** | Browse by mood and genre with AI-scored results |
-| **Search** | Full-text search with trending and quick filters |
-| **Library** | Your saved content organized by type |
-| **Profile** | Theme, playback, and genre preferences |
-
-## Tech Stack
-
-- Next.js 16 (App Router)
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- Framer Motion
-- Zustand (persistent state)
-- Lucide React (icons)
-
-## Project Structure
-
+**1. Push to GitHub**
 ```
-src/
-├── app/           # Pages and layouts
-├── components/    # UI, layout, and feature components
-├── data/          # Content catalog and mood definitions
-├── lib/           # Types, utils, recommendation engine
-└── store/         # Global state (preferences, library, player)
+cd portfolio
+git init
+git add .
+git commit -m "Initial portfolio"
+git branch -M main
+git remote add origin https://github.com/Prince9572/portfolio.git
+git push -u origin main
 ```
+(Create the empty `portfolio` repo on GitHub first at github.com/new — don't initialize it with a README, just create it empty, then run the commands above.)
 
-## Scripts
+**2. Deploy on Vercel**
+1. Go to https://vercel.com and sign in with your GitHub account.
+2. Click **Add New → Project**.
+3. Select your `portfolio` repository and click **Import**.
+4. Framework preset: choose **Other** (it's a static site, no build step needed).
+5. Leave Build Command and Output Directory empty.
+6. Click **Deploy**.
 
-- `npm run dev` — Start development server
-- `npm run build` — Production build
-- `npm run start` — Start production server
-- `npm run lint` — Run ESLint
+That's it — Vercel gives you a live URL (e.g. `portfolio-prince.vercel.app`) and will auto-redeploy every time you push to `main`. You can also add a custom domain later from the Vercel project settings.
+# Prince-Kumar
