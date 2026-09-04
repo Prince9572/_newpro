@@ -1,22 +1,11 @@
-// git add .
-// git commit -m "Initial commit"
-// git push -u origin main
-import express from "express";
-import dotenv from "dotenv";
-import proxy from "express-http-proxy";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
 
-dotenv.config();
-const port = process.env.PORT
-
-const app = express();
-
-app.use("/auth", proxy(process.env.AUTH_SERVICE));
-
-app.get("/", (req, res) => {
-    res.json({ message: "Hello from gateway"});
-});
-
-app.listen(port, () => {
-    console.log(`gateway started at ${port}`);
-    })
-
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
