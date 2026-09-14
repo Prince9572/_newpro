@@ -1,70 +1,90 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database (Users, Lawyers, Appointments)
-  postgres:
-    image: postgres:15-alpine
-    container_name: nyaysetu_postgres
+  # MySQL Transactional Database
+  mysql:
+    image: mysql:8.0
+    container_name: omnirec-mysql
     restart: always
     environment:
-      POSTGRES_USER: nyay_user
-      POSTGRES_PASSWORD: nyay_password_2026
-      POSTGRES_DB: nyaysetu_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: omnirecdb
+      MYSQL_USER: omnirec_user
+      MYSQL_PASSWORD: omnirec_pass
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
 
-  # MongoDB Document Store (Chat Sessions & RAG Metadata)
+  # MongoDB Catalog & Event Database
   mongodb:
-    image: mongo:6-jammy
-    container_name: nyaysetu_mongo
+    image: mongo:6.0
+    container_name: omnirec-mongodb
     restart: always
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
-  # Redis Cache & Rate Limiter
+  # Redis Cache
   redis:
-    image: redis:7-alpine
-    container_name: nyaysetu_redis
+    image: redis:7.0-alpine
+    container_name: omnirec-redis
     restart: always
     ports:
       - "6379:6379"
 
-  # FastAPI Backend API Service
-  backend:
+  # Python FastAPI Recommendation Engine
+  ai-service:
     build:
-      context: ./backend
+      context: ./ai-service
       dockerfile: Dockerfile
-    container_name: nyaysetu_backend
+    container_name: omnirec-ai-service
     restart: always
     ports:
       - "8000:8000"
     environment:
-      - ENV=production
-      - POSTGRES_URI=postgresql://nyay_user:nyay_password_2026@postgres:5432/nyaysetu_db
-      - MONGODB_URI=mongodb://mongodb:27017/nyaysetu_db
-      - REDIS_URI=redis://redis:6379/0
-      - LLM_PROVIDER=openai
+      - AI_SERVICE_HOST=0.0.0.0
+      - AI_SERVICE_PORT=8000
+      - SEED_DATA_PATH=/app/seed_data.json
+    volumes:
+      - ./seed_data.json:/app/seed_data.json
+
+  # Java Spring Boot Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: omnirec-backend
+    restart: always
+    ports:
+      - "8080:8080"
     depends_on:
-      - postgres
+      - mysql
       - mongodb
       - redis
+      - ai-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/omnirecdb?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=omnirec_user
+      - SPRING_DATASOURCE_PASSWORD=omnirec_pass
+      - AI_SERVICE_URL=http://ai-service:8000
+      - SEED_DATA_PATH=/app/seed_data.json
+    volumes:
+      - ./seed_data.json:/app/seed_data.json
 
-  # React / Next.js Frontend Service
+  # React Frontend (Nginx Served)
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: nyaysetu_frontend
+    container_name: omnirec-frontend
     restart: always
     ports:
-      - "3000:3000"
+      - "5173:80"
     depends_on:
       - backend
 
 volumes:
-  postgres_data:
+  mysql_data:
   mongo_data:
