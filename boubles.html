@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubbles Challenge - Progressive Assessment</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            background: #1e293b;
+            color: white;
+            padding: 1.1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-bottom: 2px solid #334155;
+        }
+
+        header h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #38bdf8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            width: 100%;
+        }
+
+        .screen-card {
+            background: #1e293b;
+            border-radius: 14px;
+            padding: 2.2rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+
+        /* START SCREEN */
+        .start-screen {
+            text-align: center;
+            padding: 2.5rem 2rem;
+        }
+
+        .start-screen h2 {
+            font-size: 1.9rem;
+            color: #38bdf8;
+            margin-bottom: 0.8rem;
+        }
+
+        .level-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin: 2rem 0;
+        }
+
+        .level-card {
+            background: #0f172a;
+            border: 2px solid #334155;
+            padding: 1rem 0.6rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .level-card:hover {
+            border-color: #38bdf8;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.25);
+        }
+
+        .level-card.active-selected {
+            border-color: #38bdf8;
+            background: #07223d;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+        }
+
+        .level-card strong {
+            display: block;
+            color: #38bdf8;
+            margin-bottom: 4px;
+            font-size: 1rem;
+        }
+
+        .level-card span {
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        .level-card .time-pill {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: #450a0a;
+            color: #fca5a5;
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid #7f1d1d;
+        }
+
+        .actions-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .btn-start {
+            font-size: 1.05rem;
+            padding: 0.8rem 2rem;
+            background: #0284c7;
+            border-radius: 8px;
+        }
+
+        .btn-start:hover { background: #0369a1; }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #38bdf8;
+            color: #38bdf8;
+            font-size: 1.05rem;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: #38bdf8;
+            color: #0f172a;
+        }
+
+        /* GAME SCREEN */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .timer-box {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ef4444;
+            background: #450a0a;
+            padding: 0.35rem 0.9rem;
+            border-radius: 20px;
+            border: 1px solid #7f1d1d;
+            min-width: 85px;
+            text-align: center;
+        }
+
+        .timer-box.paused-timer {
+            background: #451a03;
+            color: #fbbf24;
+            border-color: #92400e;
+        }
+
+        .btn {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .btn:hover { background: #0369a1; }
+        .btn-pause { background: #d97706; }
+        .btn-pause:hover { background: #b45309; }
+        .btn-submit { background: #dc2626; }
+        .btn-submit:hover { background: #b91c1c; }
+
+        .status-badge {
+            display: none;
+            background: #78350f;
+            color: #fef08a;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+
+        .diff-tag {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            margin-top: 4px;
+            background: #713f12;
+            color: #fde047;
+            border: 1px solid #ca8a04;
+        }
+
+        .timer-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: #38bdf8;
+            transition: width 1s linear;
+        }
+
+        .question-box {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: #f8fafc;
+        }
+
+        /* BUBBLES */
+        .bubble-arena {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 1.5rem auto 1rem;
+            user-select: none;
+        }
+
+        .bubble-row {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .bubble-item {
+            width: 135px;
+            height: 135px;
+            background: white;
+            border: 6px solid #0f172a;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #0f172a;
+            font-size: 1.35rem;
+            font-weight: 800;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            position: relative;
+        }
+
+        .bubble-item:hover {
+            transform: scale(1.05);
+            border-color: #0284c7;
+        }
+
+        .bubble-item.selected-bubble {
+            border-color: #38bdf8;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.85);
+            transform: scale(1.08);
+        }
+
+        .bubble-item .bubble-order-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #0284c7;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        /* RESULT SCREEN */
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #0f172a;
+            color: #38bdf8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 1.5rem auto;
+            border: 4px solid #0284c7;
+        }
+
+        .level-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .level-stat-item {
+            background: #0f172a;
+            padding: 0.6rem;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Cognitive Assessment Portal</h1>
+        <div>Bubbles Challenge</div>
+    </header>
+
+    <div class="container">
+        <!-- Start Screen with Level Select -->
+        <div id="startSection" class="screen-card start-screen">
+            <h2>Speed & Accuracy Bubbles Challenge</h2>
+            <p style="color: #94a3b8; max-width: 600px; margin: 0 auto;">
+                Kisi bhi level par click karke specific practice start karein ya "Play All (100 Questions)" chunein:
+            </p>
+
+            <div class="level-overview">
+                <div class="level-card" id="card_lvl_1" onclick="selectLevelCard(1)">
+                    <strong>Level 1</strong>
+                    <span>Easy (+ / -)</span>
+                    <span class="time-pill">⏳ 15s</span>
+                </div>
+                <div class="level-card" id="card_lvl_2" onclick="selectLevelCard(2)">
+                    <strong>Level 2</strong>
+                    <span>Moderate (×)</span>
+                    <span class="time-pill">⏳ 15s</span>
+                </div>
+                <div class="level-card" id="card_lvl_3" onclick="selectLevelCard(3)">
+                    <strong>Level 3</strong>
+                    <span>Medium (÷ & Mix)</span>
+                    <span class="time-pill">⏳ 20s</span>
+                </div>
+                <div class="level-card" id="card_lvl_4" onclick="selectLevelCard(4)">
+                    <strong>Level 4</strong>
+                    <span>Hard (n² & BODMAS)</span>
+                    <span class="time-pill">⏳ 20s</span>
+                </div>
+                <div class="level-card" id="card_lvl_5" onclick="selectLevelCard(5)">
+                    <strong>Level 5</strong>
+                    <span>Master Multi-Step</span>
+                    <span class="time-pill">⏳ 25s</span>
+                </div>
+            </div>
+
+            <div class="actions-row">
+                <button id="startSelectedBtn" class="btn btn-start" onclick="startSelectedLevel()">Start Level 1</button>
+                <button class="btn-outline" onclick="startFullAssessment()">Play All Levels (100 Qs)</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameSection" class="screen-card" style="display: none;">
+            <div class="game-header">
+                <div>
+                    <h3 style="color: #38bdf8; display: inline-block;" id="levelTitleDisplay">Level 1</h3>
+                    <span id="statusBadge" class="status-badge">PAUSED</span>
+                    <br>
+                    <small id="qCounter" style="color: #94a3b8;">Question 1</small>
+                    <span id="diffLevelTag" class="diff-tag">Difficulty Tag</span>
+                </div>
+                <div class="controls-group">
+                    <div id="timerBoxContainer" class="timer-box">⏳ <span id="timerVal">15</span>s</div>
+                    <button id="pauseBtn" class="btn btn-pause" onclick="togglePause()">Pause</button>
+                    <button class="btn btn-submit" onclick="confirmEarlySubmit()">Submit</button>
+                </div>
+            </div>
+
+            <div class="timer-bar-container">
+                <div id="timerBar" class="timer-bar"></div>
+            </div>
+
+            <div class="question-box">
+                <div class="question-text" id="qPrompt">Select the correct option:</div>
+                <div id="displayContainer"></div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultSection" class="screen-card result-screen">
+            <h2 style="color: #38bdf8;">Assessment Completed!</h2>
+            <p style="color: #94a3b8; margin-top: 0.5rem;" id="resultSubtitle">Your Performance Summary:</p>
+            <div class="score-circle" id="finalScore">0/0</div>
+            <p id="accuracyMsg" style="font-weight: 700; color:#f1f5f9; font-size: 1.05rem;"></p>
+            
+            <div id="levelWiseBreakdown" class="level-stats-grid"></div>
+
+            <button class="btn btn-start" onclick="restartTest()">Back to Menu</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQIndex = 0;
+        let startQIndex = 0;
+        let endQIndex = 100;
+        let totalQuestionsForRun = 100;
+        let chosenLevel = 1;
+        let isSingleLevelMode = false;
+
+        let score = 0;
+        let attempted = 0;
+        let timer = null;
+        let timeLeft = 15;
+        let maxTimeForCurrentQ = 15;
+        let isPaused = false;
+        let currentQuestionData = null;
+
+        let levelScores = [0, 0, 0, 0, 0];
+
+        let bubbleState = {
+            userClicks: [],
+            requiredCount: 0,
+            bubbles: []
+        };
+
+        function shuffle(arr) {
+            let res = [...arr];
+            for (let i = res.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [res[i], res[j]] = [res[j], res[i]];
+            }
+            return res;
+        }
+
+        function selectLevelCard(lvl) {
+            chosenLevel = lvl;
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`card_lvl_${i}`).classList.remove('active-selected');
+            }
+            document.getElementById(`card_lvl_${lvl}`).classList.add('active-selected');
+            document.getElementById('startSelectedBtn').innerText = `Start Level ${lvl} (20 Qs)`;
+        }
+
+        // Updated Timers: Lvl 1 & 2 -> 15s, Lvl 3 & 4 -> 20s, Lvl 5 -> 25s
+        function getLevelInfo(qIndex) {
+            if (qIndex < 20) {
+                return { level: 1, name: "Level 1: Basic Math", timeLimit: 15 };
+            } else if (qIndex < 40) {
+                return { level: 2, name: "Level 2: Moderate Operations", timeLimit: 15 };
+            } else if (qIndex < 60) {
+                return { level: 3, name: "Level 3: Multi-Step & Division", timeLimit: 20 };
+            } else if (qIndex < 80) {
+                return { level: 4, name: "Level 4: Advanced BODMAS & Squares", timeLimit: 20 };
+            } else {
+                return { level: 5, name: "Level 5: Master Multi-Step", timeLimit: 25 };
+            }
+        }
+
+        function generateMathExpression(level, targetVal = null) {
+            if (targetVal !== null) {
+                if (level === 1) {
+                    let a = Math.floor(Math.random() * Math.max(2, targetVal - 1)) + 1;
+                    let b = targetVal - a;
+                    return { text: `${a} + ${b}`, val: targetVal };
+                } else if (level === 2) {
+                    if (targetVal % 2 === 0 && Math.random() > 0.5) {
+                        return { text: `2 × ${targetVal / 2}`, val: targetVal };
+                    }
+                    let a = Math.floor(Math.random() * 15) + 5;
+                    return { text: `${targetVal + a} - ${a}`, val: targetVal };
+                } else if (level === 3) {
+                    let mult = Math.floor(Math.random() * 6) + 2;
+                    let rem = targetVal - (mult * 3);
+                    if (rem > 0) return { text: `3 × ${mult} + ${rem}`, val: targetVal };
+                    return { text: `${targetVal * 2} ÷ 2`, val: targetVal };
+                } else if (level === 4) {
+                    let sq = Math.floor(Math.sqrt(targetVal));
+                    if (sq >= 2 && targetVal - (sq * sq) >= 0 && Math.random() > 0.4) {
+                        let diff = targetVal - (sq * sq);
+                        return { text: `${sq}² + ${diff}`, val: targetVal };
+                    }
+                    let m = Math.floor(Math.random() * 5) + 3;
+                    return { text: `(${m} × ${m}) + ${targetVal - (m * m)}`, val: targetVal };
+                } else {
+                    let a = Math.floor(Math.random() * 6) + 3;
+                    let b = Math.floor(Math.random() * 5) + 2;
+                    let c = (a * b) - targetVal;
+                    if (c > 0) return { text: `${a} × ${b} - ${c}`, val: targetVal };
+                    return { text: `${targetVal + 35} - 35`, val: targetVal };
+                }
+            }
+
+            if (level === 1) {
+                if (Math.random() > 0.5) {
+                    let a = Math.floor(Math.random() * 15) + 2;
+                    let b = Math.floor(Math.random() * 15) + 2;
+                    return { text: `${a} + ${b}`, val: a + b };
+                } else {
+                    let a = Math.floor(Math.random() * 25) + 10;
+                    let b = Math.floor(Math.random() * (a - 1)) + 1;
+                    return { text: `${a} - ${b}`, val: a - b };
+                }
+            } else if (level === 2) {
+                let type = Math.floor(Math.random() * 3);
+                if (type === 0) {
+                    let a = Math.floor(Math.random() * 35) + 15;
+                    let b = Math.floor(Math.random() * 25) + 10;
+                    return { text: `${a} + ${b}`, val: a + b };
+                } else if (type === 1) {
+                    let a = Math.floor(Math.random() * 8) + 2;
+                    let b = Math.floor(Math.random() * 9) + 2;
+                    return { text: `${a} × ${b}`, val: a * b };
+                } else {
+                    let a = Math.floor(Math.random() * 45) + 20;
+                    let b = Math.floor(Math.random() * 18) + 5;
+                    return { text: `${a} - ${b}`, val: a - b };
+                }
+            } else if (level === 3) {
+                let type = Math.floor(Math.random() * 3);
+                if (type === 0) {
+                    let a = Math.floor(Math.random() * 7) + 2;
+                    let b = Math.floor(Math.random() * 6) + 2;
+                    let c = Math.floor(Math.random() * 12) + 2;
+                    return { text: `${a} × ${b} + ${c}`, val: (a * b) + c };
+                } else if (type === 1) {
+                    let divisor = Math.floor(Math.random() * 6) + 2;
+                    let quotient = Math.floor(Math.random() * 8) + 3;
+                    let dividend = divisor * quotient;
+                    return { text: `${dividend} ÷ ${divisor}`, val: quotient };
+                } else {
+                    let a = Math.floor(Math.random() * 8) + 3;
+                    let b = Math.floor(Math.random() * 5) + 2;
+                    let c = Math.floor(Math.random() * 8) + 1;
+                    return { text: `${a} × ${b} - ${c}`, val: (a * b) - c };
+                }
+            } else if (level === 4) {
+                let type = Math.floor(Math.random() * 3);
+                if (type === 0) {
+                    let n = Math.floor(Math.random() * 6) + 3;
+                    let extra = Math.floor(Math.random() * 15) + 2;
+                    return { text: `${n}² + ${extra}`, val: (n * n) + extra };
+                } else if (type === 1) {
+                    let div = Math.floor(Math.random() * 5) + 2;
+                    let res = Math.floor(Math.random() * 7) + 3;
+                    let mult = Math.floor(Math.random() * 5) + 2;
+                    return { text: `${div * res} ÷ ${div} + ${mult}`, val: res + mult };
+                } else {
+                    let a = Math.floor(Math.random() * 12) + 6;
+                    let b = Math.floor(Math.random() * 6) + 2;
+                    let c = Math.floor(Math.random() * 15) + 5;
+                    return { text: `${a} + ${b} × 3 - ${c}`, val: a + (b * 3) - c };
+                }
+            } else {
+                let type = Math.floor(Math.random() * 3);
+                if (type === 0) {
+                    let a = Math.floor(Math.random() * 6) + 3;
+                    let b = Math.floor(Math.random() * 6) + 2;
+                    let c = Math.floor(Math.random() * 4) + 2;
+                    let d = Math.floor(Math.random() * 3) + 1;
+                    return { text: `(${a}×${b}) - (${c}×${d})`, val: (a * b) - (c * d) };
+                } else if (type === 1) {
+                    let n = Math.floor(Math.random() * 7) + 4;
+                    let sub = Math.floor(Math.random() * 12) + 2;
+                    return { text: `${n}² - ${sub}`, val: (n * n) - sub };
+                } else {
+                    let a = Math.floor(Math.random() * 15) + 10;
+                    let b = Math.floor(Math.random() * 8) + 4;
+                    let c = Math.floor(Math.random() * 5) + 2;
+                    return { text: `${a} × ${c} - ${b}`, val: (a * c) - b };
+                }
+            }
+        }
+
+        function generateBubbleQuestion(qNum) {
+            let levelInfo = getLevelInfo(qNum);
+            let currentLevel = levelInfo.level;
+
+            document.getElementById('levelTitleDisplay').innerText = `Level ${currentLevel}`;
+            let diffTag = document.getElementById('diffLevelTag');
+            diffTag.innerText = `${levelInfo.name} [${levelInfo.timeLimit}s]`;
+
+            let questionTypes = ['ascending', 'descending', 'more_than', 'less_than', 'equal'];
+            let chosenQType = questionTypes[qNum % questionTypes.length];
+
+            let instruction = "";
+            let expectedTargets = [];
+            let bubbles = [];
+
+            if (chosenQType === 'ascending' || chosenQType === 'descending') {
+                let b1 = generateMathExpression(currentLevel);
+                let b2 = generateMathExpression(currentLevel);
+                let b3 = generateMathExpression(currentLevel);
+
+                while (b2.val === b1.val) b2 = generateMathExpression(currentLevel);
+                while (b3.val === b1.val || b3.val === b2.val) b3 = generateMathExpression(currentLevel);
+
+                bubbles = [
+                    { id: 1, text: b1.text, val: b1.val },
+                    { id: 2, text: b2.text, val: b2.val },
+                    { id: 3, text: b3.text, val: b3.val }
+                ];
+
+                if (chosenQType === 'ascending') {
+                    instruction = "Click bubbles in <strong>ASCENDING ORDER</strong> (Smallest to Largest):";
+                    expectedTargets = [...bubbles].sort((a, b) => a.val - b.val).map(b => b.id);
+                } else {
+                    instruction = "Click bubbles in <strong>DESCENDING ORDER</strong> (Largest to Smallest):";
+                    expectedTargets = [...bubbles].sort((a, b) => b.val - a.val).map(b => b.id);
+                }
+            } else {
+                let baseTarget = 15 + (currentLevel * 10) + (qNum % 10);
+
+                if (chosenQType === 'more_than') {
+                    instruction = `Click the <strong>TWO BUBBLES</strong> with value <strong>MORE THAN ${baseTarget}</strong>:`;
+                    let v1 = baseTarget + Math.floor(Math.random() * 8) + 2;
+                    let v2 = baseTarget + Math.floor(Math.random() * 12) + 3;
+                    let v3 = baseTarget - Math.floor(Math.random() * 6) - 1;
+                    let v4 = baseTarget - Math.floor(Math.random() * 8) - 2;
+
+                    let items = shuffle([
+                        { id: 1, ...generateMathExpression(currentLevel, v1), isTarget: true },
+                        { id: 2, ...generateMathExpression(currentLevel, v2), isTarget: true },
+                        { id: 3, ...generateMathExpression(currentLevel, v3), isTarget: false },
+                        { id: 4, ...generateMathExpression(currentLevel, v4), isTarget: false }
+                    ]);
+                    bubbles = items;
+                    expectedTargets = items.filter(b => b.isTarget).map(b => b.id);
+                } 
+                else if (chosenQType === 'less_than') {
+                    instruction = `Click the <strong>TWO BUBBLES</strong> with value <strong>LESS THAN ${baseTarget}</strong>:`;
+                    let v1 = baseTarget - Math.floor(Math.random() * 6) - 2;
+                    let v2 = baseTarget - Math.floor(Math.random() * 8) - 1;
+                    let v3 = baseTarget + Math.floor(Math.random() * 8) + 2;
+                    let v4 = baseTarget + Math.floor(Math.random() * 12) + 3;
+
+                    let items = shuffle([
+                        { id: 1, ...generateMathExpression(currentLevel, v1), isTarget: true },
+                        { id: 2, ...generateMathExpression(currentLevel, v2), isTarget: true },
+                        { id: 3, ...generateMathExpression(currentLevel, v3), isTarget: false },
+                        { id: 4, ...generateMathExpression(currentLevel, v4), isTarget: false }
+                    ]);
+                    bubbles = items;
+                    expectedTargets = items.filter(b => b.isTarget).map(b => b.id);
+                } 
+                else {
+                    instruction = `Click the <strong>TWO BUBBLES</strong> whose value is <strong>EQUAL TO ${baseTarget}</strong>:`;
+                    let v3 = baseTarget + Math.floor(Math.random() * 6) + 2;
+                    let v4 = baseTarget - Math.floor(Math.random() * 6) - 2;
+
+                    let items = shuffle([
+                        { id: 1, ...generateMathExpression(currentLevel, baseTarget), isTarget: true },
+                        { id: 2, ...generateMathExpression(currentLevel, baseTarget), isTarget: true },
+                        { id: 3, ...generateMathExpression(currentLevel, v3), isTarget: false },
+                        { id: 4, ...generateMathExpression(currentLevel, v4), isTarget: false }
+                    ]);
+                    bubbles = items;
+                    expectedTargets = items.filter(b => b.isTarget).map(b => b.id);
+                }
+            }
+
+            bubbleState.bubbles = bubbles;
+            bubbleState.requiredCount = expectedTargets.length;
+            bubbleState.userClicks = [];
+
+            let html = '';
+            if (bubbles.length === 3) {
+                html = `
+                    <div class="bubble-arena">
+                        <div class="bubble-row">
+                            <div id="bub_1" class="bubble-item" onclick="handleBubbleClick(1)">${bubbles[0].text}</div>
+                            <div id="bub_2" class="bubble-item" onclick="handleBubbleClick(2)">${bubbles[1].text}</div>
+                        </div>
+                        <div class="bubble-row">
+                            <div id="bub_3" class="bubble-item" onclick="handleBubbleClick(3)">${bubbles[2].text}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="bubble-arena">
+                        <div class="bubble-row">
+                            <div id="bub_${bubbles[0].id}" class="bubble-item" onclick="handleBubbleClick(${bubbles[0].id})">${bubbles[0].text}</div>
+                            <div id="bub_${bubbles[1].id}" class="bubble-item" onclick="handleBubbleClick(${bubbles[1].id})">${bubbles[1].text}</div>
+                        </div>
+                        <div class="bubble-row">
+                            <div id="bub_${bubbles[2].id}" class="bubble-item" onclick="handleBubbleClick(${bubbles[2].id})">${bubbles[2].text}</div>
+                            <div id="bub_${bubbles[3].id}" class="bubble-item" onclick="handleBubbleClick(${bubbles[3].id})">${bubbles[3].text}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return {
+                prompt: instruction,
+                htmlContent: html,
+                answer: (chosenQType === 'ascending' || chosenQType === 'descending') 
+                        ? expectedTargets.join(',') 
+                        : expectedTargets.sort().join(','),
+                isOrdered: (chosenQType === 'ascending' || chosenQType === 'descending'),
+                timeLimit: levelInfo.timeLimit,
+                level: currentLevel
+            };
+        }
+
+        function handleBubbleClick(bubbleId) {
+            if (isPaused) return;
+
+            let bubbleEl = document.getElementById(`bub_${bubbleId}`);
+            if (bubbleState.userClicks.includes(bubbleId)) return;
+
+            bubbleState.userClicks.push(bubbleId);
+            if (bubbleEl) {
+                bubbleEl.classList.add('selected-bubble');
+                if (bubbleState.requiredCount > 1) {
+                    let badge = document.createElement('div');
+                    badge.className = 'bubble-order-badge';
+                    badge.innerText = bubbleState.userClicks.length;
+                    bubbleEl.appendChild(badge);
+                }
+            }
+
+            if (bubbleState.userClicks.length === bubbleState.requiredCount) {
+                let userChoice = currentQuestionData.isOrdered
+                    ? bubbleState.userClicks.join(',')
+                    : [...bubbleState.userClicks].sort().join(',');
+
+                setTimeout(() => {
+                    submitAnswer(userChoice);
+                }, 180);
+            }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            let pauseBtn = document.getElementById('pauseBtn');
+            let statusBadge = document.getElementById('statusBadge');
+            let timerBox = document.getElementById('timerBoxContainer');
+            let bubbles = document.querySelectorAll('.bubble-item');
+
+            if (isPaused) {
+                pauseBtn.innerText = 'Resume';
+                pauseBtn.style.background = '#059669';
+                statusBadge.style.display = 'inline-block';
+                timerBox.classList.add('paused-timer');
+                bubbles.forEach(b => b.style.pointerEvents = 'none');
+            } else {
+                pauseBtn.innerText = 'Pause';
+                pauseBtn.style.background = '#d97706';
+                statusBadge.style.display = 'none';
+                timerBox.classList.remove('paused-timer');
+                bubbles.forEach(b => b.style.pointerEvents = 'auto');
+            }
+        }
+
+        function confirmEarlySubmit() {
+            if (confirm("Kya aap session submit karna chahte hain?")) {
+                finishGame();
+            }
+        }
+
+        function loadQuestion() {
+            if (currentQIndex >= endQIndex) {
+                finishGame();
+                return;
+            }
+
+            let displayNum = isSingleLevelMode ? (currentQIndex - startQIndex + 1) : (currentQIndex + 1);
+            document.getElementById('qCounter').innerText = `Question ${displayNum} of ${totalQuestionsForRun}`;
+
+            currentQuestionData = generateBubbleQuestion(currentQIndex);
+            document.getElementById('qPrompt').innerHTML = currentQuestionData.prompt;
+            document.getElementById('displayContainer').innerHTML = currentQuestionData.htmlContent;
+
+            maxTimeForCurrentQ = currentQuestionData.timeLimit;
+            resetTimer(maxTimeForCurrentQ);
+        }
+
+        function resetTimer(seconds) {
+            clearInterval(timer);
+            timeLeft = seconds;
+            document.getElementById('timerVal').innerText = timeLeft;
+            document.getElementById('timerBar').style.width = '100%';
+
+            timer = setInterval(() => {
+                if (isPaused) return;
+
+                timeLeft--;
+                document.getElementById('timerVal').innerText = timeLeft;
+                document.getElementById('timerBar').style.width = `${(timeLeft / maxTimeForCurrentQ) * 100}%`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    currentQIndex++;
+                    loadQuestion();
+                }
+            }, 1000);
+        }
+
+        function submitAnswer(userChoice) {
+            if (isPaused) return;
+            clearInterval(timer);
+            attempted++;
+
+            if (userChoice === currentQuestionData.answer) {
+                score++;
+                levelScores[currentQuestionData.level - 1]++;
+            }
+
+            currentQIndex++;
+            loadQuestion();
+        }
+
+        function finishGame() {
+            clearInterval(timer);
+            document.getElementById('gameSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+
+            document.getElementById('finalScore').innerText = `${score}/${totalQuestionsForRun}`;
+            let percentage = Math.round((score / totalQuestionsForRun) * 100);
+            document.getElementById('accuracyMsg').innerText = `Questions Attempted: ${attempted} | Correct: ${score} | Final Accuracy: ${percentage}%`;
+
+            let breakdownContainer = document.getElementById('levelWiseBreakdown');
+            if (isSingleLevelMode) {
+                breakdownContainer.style.display = 'none';
+            } else {
+                breakdownContainer.style.display = 'grid';
+                let breakdownHtml = '';
+                levelScores.forEach((lvlScore, idx) => {
+                    breakdownHtml += `
+                        <div class="level-stat-item">
+                            <div style="color:#38bdf8; font-weight:bold;">Lvl ${idx + 1}</div>
+                            <div>${lvlScore}/20</div>
+                        </div>
+                    `;
+                });
+                breakdownContainer.innerHTML = breakdownHtml;
+            }
+        }
+
+        function startSelectedLevel() {
+            isSingleLevelMode = true;
+            startQIndex = (chosenLevel - 1) * 20;
+            endQIndex = startQIndex + 20;
+            totalQuestionsForRun = 20;
+            launchGame();
+        }
+
+        function startFullAssessment() {
+            isSingleLevelMode = false;
+            startQIndex = 0;
+            endQIndex = 100;
+            totalQuestionsForRun = 100;
+            launchGame();
+        }
+
+        function launchGame() {
+            currentQIndex = startQIndex;
+            score = 0;
+            attempted = 0;
+            isPaused = false;
+            levelScores = [0, 0, 0, 0, 0];
+
+            document.getElementById('startSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('gameSection').style.display = 'block';
+            loadQuestion();
+        }
+
+        function restartTest() {
+            clearInterval(timer);
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('gameSection').style.display = 'none';
+            document.getElementById('startSection').style.display = 'block';
+            selectLevelCard(1);
+        }
+
+        window.onload = () => {
+            selectLevelCard(1);
+        };
+    </script>
+</body>
+</html>
