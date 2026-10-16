@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>MovieVerse AI</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      background:#0f172a;
+      color:white;
+      min-height:100vh;
+      padding:30px;
+    }
+
+    h1{
+      text-align:center;
+      margin-bottom:30px;
+      font-size:50px;
+      color:#38bdf8;
+    }
+
+    .top-bar{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:35px;
+      flex-wrap:wrap;
+    }
+
+    input{
+      width:350px;
+      padding:15px;
+      border:none;
+      border-radius:12px;
+      outline:none;
+      font-size:16px;
+    }
+
+    button{
+      padding:15px 22px;
+      border:none;
+      border-radius:12px;
+      background:#38bdf8;
+      color:white;
+      cursor:pointer;
+      font-size:16px;
+      transition:0.3s;
+    }
+
+    button:hover{
+      transform:scale(1.05);
+      background:#0ea5e9;
+    }
+
+    .category-buttons{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin-bottom:40px;
+      flex-wrap:wrap;
+    }
+
+    .category-buttons button{
+      background:#1e293b;
+    }
+
+    .movies{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:25px;
+    }
+
+    .card{
+      background:#1e293b;
+      border-radius:18px;
+      overflow:hidden;
+      transition:0.4s;
+      box-shadow:0 10px 20px rgba(0,0,0,0.4);
+    }
+
+    .card:hover{
+      transform:translateY(-10px);
+    }
+
+    .card img{
+      width:100%;
+      height:350px;
+      object-fit:cover;
+    }
+
+    .content{
+      padding:20px;
+    }
+
+    .content h2{
+      margin-bottom:10px;
+      font-size:22px;
+    }
+
+    .tag{
+      display:inline-block;
+      background:#38bdf8;
+      padding:8px 14px;
+      border-radius:20px;
+      margin-top:10px;
+      font-size:14px;
+    }
+
+    .rating{
+      margin-top:10px;
+      color:#facc15;
+      font-size:18px;
+    }
+
+    .loading{
+      text-align:center;
+      display:none;
+      margin-bottom:20px;
+      font-size:20px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <h1>🎬 MovieVerse AI</h1>
+
+  <div class="top-bar">
+
+    <input 
+      type="text" 
+      id="searchInput" 
+      placeholder="Search movies..."
+    >
+
+    <button onclick="searchMovie()">
+      Search
+    </button>
+
+  </div>
+
+  <!-- PRE-ADDED RECOMMENDATIONS -->
+
+  <div class="category-buttons">
+
+    <button onclick="loadCategory('batman')">
+      Batman
+    </button>
+
+    <button onclick="loadCategory('avengers')">
+      Avengers
+    </button>
+
+    <button onclick="loadCategory('harry potter')">
+      Harry Potter
+    </button>
+
+    <button onclick="loadCategory('spider man')">
+      Spider Man
+    </button>
+
+    <button onclick="loadCategory('fast')">
+      Fast & Furious
+    </button>
+
+  </div>
+
+  <div class="loading" id="loading">
+    Loading movies...
+  </div>
+
+  <div class="movies" id="movies"></div>
+
+  <script>
+
+    const API = "https://www.omdbapi.com/?apikey=564727fa&s=";
+
+    const moviesContainer = document.getElementById("movies");
+
+    const loading = document.getElementById("loading");
+
+    // AUTO LOAD DEFAULT MOVIES
+    window.onload = () => {
+      loadCategory("avengers");
+    };
+
+    async function loadCategory(category){
+
+      loading.style.display = "block";
+
+      moviesContainer.innerHTML = "";
+
+      const response = await fetch(API + category);
+
+      const data = await response.json();
+
+      loading.style.display = "none";
+
+      if(data.Search){
+
+        data.Search.forEach(movie => {
+
+          const poster = movie.Poster !== "N/A"
+            ? movie.Poster
+            : "https://via.placeholder.com/300x450";
+
+          moviesContainer.innerHTML += `
+
+            <div class="card">
+
+              <img src="${poster}" alt="Movie Poster">
+
+              <div class="content">
+
+                <h2>${movie.Title}</h2>
+
+                <p>📅 ${movie.Year}</p>
+
+                <div class="tag">
+                  ${movie.Type.toUpperCase()}
+                </div>
+
+                <div class="rating">
+                  ⭐ Popular Recommendation
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
+        });
+
+      }
+
+    }
+
+    function searchMovie(){
+
+      const value = document
+        .getElementById("searchInput")
+        .value;
+
+      if(value === ""){
+        alert("Please enter movie name");
+        return;
+      }
+
+      loadCategory(value);
+
+    }
+
+    // ENTER KEY SUPPORT
+    document
+      .getElementById("searchInput")
+      .addEventListener("keypress", function(event){
+
+        if(event.key === "Enter"){
+          searchMovie();
+        }
+
+      });
+
+  </script>
+
+</body>
+</html>
