@@ -3,14 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Count</title>
+    <title>To-Do-List</title>
 </head>
 <body>
-    <button id="btn">
-        click me
-    </button>
-    <button id="btn"> Submit</button>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <h1 id="title" style="display: flex; justify-content: center;">To-Do-List</h1>
+    
+    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+        <input type="text" id="task-input" placeholder="Enter a task">
+        <button id="add-button" onclick="Add()" style="color: rgb(0, 184, 107);">ADD</button>
+    </div>
+
+    <ol id="olist" style="max-width: 400px; margin: 0 auto;"></ol>
+
+    <script type="text/javascript">
+        function Add() {
+            var taskInput = document.getElementById("task-input");
+            var task = taskInput.value.trim();
+
+            if (task !== "") {
+                var olist = document.getElementById("olist");
+                var listItem = document.createElement("li");
+                listItem.textContent = task;
+                olist.appendChild(listItem);
+                taskInput.value = ""; 
+            } else {
+                alert("Please enter a task.");
+            }
+            let btn = document.getElementById("add-button");
+            btn.textContent = "DELETE";
+
+            btn.onclick = function() {
+                list.remove();
+            }
+        }
+    </script>
 </body>
 </html>
