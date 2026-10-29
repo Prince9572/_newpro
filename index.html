@@ -3,17 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login Form</title>
 </head>
 <body>
-    <div class="card">
-        <h3>Text Area</h3>
-        <div class="textarea-wrapper">
-            <textarea id="messageBox" maxlength="250" placeholder="Enter your message"></textarea>
-        </div>
-        <div class="counter-footer">
-            <span id="charCount">250 characters left</span>
-        </div>
+    <h1 id="title" style="display: flex; justify-content: center;">Login Form</h1>
+    
+    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+        <input type="text" id="username-input" placeholder="Enter your username">
+        <input type="password" id="password-input" placeholder="Enter your password">
+        <button id="show-password-button" onclick="togglePassword()">Show password</button>
+        <button id="login-button" onclick="login()" style="color: rgb(0, 184, 107);">LOGIN</button>
     </div>
+
+    <script type="text/javascript">
+        function togglePassword() {
+            var passwordInput = document.getElementById("password-input");
+            var toggleBtn = document.getElementById("show-password-button");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleBtn.textContent = "Hide password";
+            } else {
+                passwordInput.type = "password";
+                toggleBtn.textContent = "Show password";
+            }
+        }
+
+        function login() {
+            var usernameInput = document.getElementById("username-input");
+            var passwordInput = document.getElementById("password-input");
+            var username = usernameInput.value.trim();
+            var password = passwordInput.value.trim();
+
+            if (username !== "" && password !== "") {
+                alert("Login successful!");
+            } else {
+                alert("Please enter both username and password.");
+            }
+        }
+    </script>
 </body>
 </html>
