@@ -1,153 +1,106 @@
-# OmniRec — AI-Powered Multi-Platform E-Commerce Aggregator & Personalized Recommendation Platform
+# NyaySetu (न्यायसेतु) – AI-Assisted Legal Suggestion System
 
-[![Java Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Python FastAPI](https://img.shields.io/badge/FastAPI-0.110-blue.svg)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-18.2-cyan.svg)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8.svg)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-**OmniRec** is an enterprise-grade multi-platform e-commerce aggregation and personalized shopping intelligence platform. It creates a unified intelligence layer across major shopping platforms—such as **Amazon, Flipkart, Myntra, and Nykaa**—by deduplicating products, providing multi-seller price comparisons, parsing natural-language shopping queries, and continuously computing personalized product recommendations via an independent Python FastAPI hybrid AI microservice.
+> Empowering Indian citizens, law students, and legal professionals with intelligent legal suggestions, statutory awareness (Bharatiya Nyaya Sanhita, CPC, BNSS, RERA, CPA 2019), and verified advocate discovery.
 
 ---
 
-## 🏛️ System Architecture Diagram
+## 🏛️ Overview
 
-```
-                              ┌─────────────────────────────────────────┐
-                              │  React 18 + Vite + TypeScript + Tailwind │
-                              │    (Frontend Application - Port 5173)   │
-                              └────────────────────┬────────────────────┘
-                                                   │
-                                                   ▼ REST API (JWT Auth)
-                              ┌─────────────────────────────────────────┐
-                              │    Java + Spring Boot Main Backend      │
-                              │           (Port 8080)                   │
-                              └────────┬───────────┬────────────┬───────┘
-                                       │           │            │
-             ┌─────────────────────────┴─┐   ┌─────┴─────┐   ┌──┴────────────────────────┐
-             │ MySQL Database            │   │ Redis     │   │ Python FastAPI AI Engine  │
-             │ (Transactional / User Auth)│   │ (Cache)   │   │ (Hybrid Recs & NLP Search)│
-             └───────────────────────────┘   └───────────┘   └───────────────────────────┘
-                                                   │
-                                            ┌──────┴────────┐
-                                            │ MongoDB       │
-                                            │ (Product Catalog)
-                                            └───────────────┘
-```
+**NyaySetu** is an Indian legal assistant platform inspired by ChatGPT. Built with a clean white and navy design system, it delivers bilingual (English & Hindi) legal guidance, procedural roadmaps, evidentiary document checklists, and connects citizens with Bar Council-verified advocates.
 
 ---
 
-## ✨ Key Features
+## 🚀 Tech Stack
 
-1. **Multi-Platform E-Commerce Aggregation**:
-   - Unified catalog normalizing products from Amazon, Flipkart, Myntra, and Nykaa.
-   - Grouping duplicate product listings across sellers with real-time multi-seller price comparison matrix (price, discount %, stock, delivery speed).
-
-2. **Hybrid AI Recommendation Engine**:
-   - Developed in Python FastAPI with `scikit-learn`, `numpy`, and `pandas`.
-   - Combines **Content-Based TF-IDF Similarity**, **Category & Brand Affinity**, **Budget Sensitivity Quantiles**, and **Recency/Discount Factor Boosts**.
-   - Natural Language Human-Readable Reasoning for every recommendation (e.g. *"Recommended because you frequently view running shoes and usually shop below ₹3,000"*).
-   - Cold-start initializer for new users to prevent empty state.
-   - Built-in resilience: Spring Boot automatically executes an internal rule-based fallback algorithm if the Python AI service is offline.
-
-3. **Natural-Language Shopping Queries (NLP Search)**:
-   - Global search input supports conversational queries like:
-     - *"Find running shoes under ₹3,000"*
-     - *"Show me college outfits under ₹5,000"*
-     - *"Best skincare products under ₹1,500"*
-     - *"I need a laptop for programming under ₹70,000"*
-   - Converts raw strings into structured JSON query filters (Category, Max Price, Brand, Intent Tags).
-
-4. **OAuth Sandbox & Connected Stores Management**:
-   - Interactive store consent manager for Amazon, Flipkart, Myntra, and Nykaa.
-   - **Zero Password Storage Guarantee**: OmniRec uses sandbox mock connectors (`MockAmazonConnector`, `MockFlipkartConnector`, etc.) and never asks for or stores third-party passwords, OTPs, session tokens, or payment credentials.
-
-5. **Universal Wishlist & Product Comparison**:
-   - Unified wishlist across stores with price drop tracking.
-   - Multi-product side-by-side spec comparison table.
-
-6. **Activity & Data-Grounded AI Insights**:
-   - Visual category distribution & brand affinity progress charts based strictly on user interaction signals.
-
-7. **Admin Metrics Dashboard (`ROLE_ADMIN`)**:
-   - Real-time platform metrics: total users, active users, catalog scale, recommendation CTR %, API response times, and store connector health checks.
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript 5
+- **Styling:** Tailwind CSS v4 (Clean White & Deep Navy palette)
+- **Icons:** Lucide React
+- **State Management:** React Context API with LocalStorage persistence (`AuthContext`, `ChatContext`)
+- **Backend Readiness:** Modular API Client (`src/services/api.ts`) ready for immediate FastAPI integration via `NEXT_PUBLIC_FASTAPI_URL`
 
 ---
 
-## 🛠️ Technology Stack
+## 🌟 Core Features & Modules
 
-| Layer | Technologies Used |
-|---|---|
-| **Frontend** | React 18, TypeScript, Vite, Tailwind CSS, Lucide React, Framer Motion |
-| **Main Backend** | Java 17/24, Spring Boot 3.2, Spring Security, Spring Data JPA |
-| **AI Microservice**| Python 3.12, FastAPI, Uvicorn, Scikit-Learn, NumPy, Pandas, Pydantic |
-| **Databases** | MySQL 8.0 (Relational / H2 In-Memory), MongoDB 6.0 (Catalog), Redis 7.0 (Caching) |
-| **Security & Auth**| JWT (JSON Web Tokens), BCrypt Password Encoder, OAuth2 Sandbox Architecture |
-| **Infrastructure** | Docker, Docker Compose, Nginx |
+### 1. 💬 ChatGPT-Style Legal Workspace (`/chat` & `/chat/[id]`)
+- **Collapsible Sidebar:** Collapse and expand toggle with desktop and mobile drawer support.
+- **New Consultation:** Instant new chat creation with auto-naming based on the legal issue.
+- **Chat History & Search:** Search conversations in real-time, grouped by pinned and recent inquiries.
+- **Rename & Delete Dialogs:** Custom accessible modals to rename or delete chats with confirmation.
+- **Structured Legal Responses:**
+  - Executive Legal Summary
+  - Applicable Indian Statutes & Sections (BNS 2023, BNSS 2023, CPC, RERA, CPA 2019, IT Act)
+  - Numbered immediate procedural next steps
+  - Evidentiary checklist of required documents
+  - **Bilingual Switcher:** Instant toggle between English and Hindi ('हिंदी सारांश')
+  - One-click copy advice & export text summary
+  - Thumbs up/down feedback
+  - Direct "Find Relevant Advocates" button
+- **Legal Input Bar:**
+  - Expanding textarea with Enter to send (Shift+Enter for newline)
+  - File attachment for legal documents (FIRs, Notices, Contracts, Agreements)
+  - Voice dictation simulation
+  - Language selection (English, Hindi, Hinglish)
+  - Dynamic multi-step thinking indicator ("Reviewing against Indian Statutory Framework...")
+- **Suggested Legal Prompts:** One-click chips across all 6 legal categories.
+
+### 2. ⚖️ 6 Comprehensive Legal Categories (`/categories` & `/categories/[slug]`)
+1. **Criminal Law:** Bharatiya Nyaya Sanhita (BNS 2023), BNSS 2023, BSA 2023, Section 138 NI Act, Bails.
+2. **Family Law:** Hindu Marriage Act 1955, Special Marriage Act, Mutual Consent Divorce, Maintenance, Domestic Violence (PWDVA).
+3. **Property Law:** RERA Act 2016, Transfer of Property Act 1882, Builder delay interest (SBI MCLR + 2%), Tenant eviction.
+4. **Consumer Rights:** Consumer Protection Act 2019, e-Daakhil filing, E-Commerce Rules 2020, Defective products.
+5. **Cyber Crime:** Information Technology Act 2000 (Sec 66C/66D), Golden Hour reporting via 1930, RBI Zero Liability rules.
+6. **Civil Law:** Code of Civil Procedure (CPC 1908), Summary Suits (Order 37), Indian Contract Act 1872, Specific Relief.
+
+### 3. 🧑‍⚖️ Advocate Discovery & Booking (`/lawyers` & `/lawyers/[id]`)
+- **Search & Filters:** Filter by Specialization, City (New Delhi, Mumbai, Bengaluru, etc.), Verified status, Rating, Experience, and Consultation Fee.
+- **Advocate Profiles:** Bar Council registration numbers, enrollment year, court practice (Supreme Court, High Courts, District Courts), biography, and verified client reviews.
+- **Consultation Booking Modal:** Interactive booking with date picker, time slot selector, consultation mode (Online Video, Phone Call, Chamber Visit), and issue summary.
+
+### 4. 📊 3 Tailored Dashboards
+- **Citizen / Client Dashboard (`/dashboard`):** Active case files, statutory limitation periods, hearing schedules, quick category jumps.
+- **Advocate Dashboard (`/dashboard/lawyer`):** Incoming citizen consultation briefs, accept/decline leads, chamber schedule, earnings tracker.
+- **Admin Dashboard (`/dashboard/admin`):** DPDP Act compliance metrics, Indian statutory vector index sync (511 BNS sections), security audit logs.
+
+### 5. 🔐 Authentication & Onboarding (`/auth/*`)
+- **Login (`/auth/login`):** Multi-role login with **one-click demo persona buttons** for instant testing as Citizen, Advocate, or Admin.
+- **Register (`/auth/register`):** Multi-role registration with Bar Council registration number verification for advocates.
+- **Forgot Password (`/auth/forgot-password`):** 6-digit OTP verification and password reset flow.
+
+### 6. 🛡️ Statutory Compliance & Safety
+- **Bar Council of India (BCI) Disclaimer:** Prominent banners ensuring compliance with BCI Rule 36.
+- **DPDP Act 2023 Privacy Policy (`/privacy`):** Attorney-client privilege safeguards under Bharatiya Sakshya Adhiniyam (BSA), user data export (JSON), and right to erasure.
+- **Emergency Helplines (`/help`):** Direct access to official 24x7 Government of India helplines:
+  - **1930:** National Cyber Crime Helpline (Golden Hour freeze)
+  - **15100:** NALSA Free Legal Aid Tele-Law
+  - **1915:** National Consumer Grievance
+  - **1091 / 181:** Women in Distress Emergency Helpline
 
 ---
 
-## 🚀 Quick Start Guide
-
-### Option 1: Native Standalone Execution (Fastest Local Test)
-
-Run the Python AI Microservice and React Frontend natively using the provided startup script:
+## 🛠️ Running the Application
 
 ```bash
-# 1. Clone & Enter Project Directory
-git clone https://github.com/your-username/OmniRec.git
-cd OmniRec
+# Install dependencies
+npm install
 
-# 2. Start Services
-./start.sh
-```
+# Start development server
+npm run dev
 
-- **Frontend App**: `http://localhost:5173`
-- **Python AI API Docs**: `http://localhost:8000/docs`
-- **Spring Boot Swagger Docs**: `http://localhost:8080/swagger-ui.html`
-
----
-
-### Option 2: Docker Compose Orchestration
-
-To run the complete stack including MySQL, MongoDB, Redis, Python AI Service, Spring Boot, and React via Nginx:
-
-```bash
-docker-compose up --build
-```
-
----
-
-## 🧪 Automated Testing
-
-### 1. Python AI Service Tests (Pytest)
-```bash
-python3 -m pytest ai-service/test_recommendation.py
-```
-
-### 2. Spring Boot Backend Tests (JUnit 5 / MockMvc)
-```bash
-cd backend
-./mvnw test
-```
-
-### 3. React Frontend Build & Typecheck (Vite / TSC)
-```bash
-cd frontend
+# Build production bundle
 npm run build
 ```
 
----
-
-## 🔒 Privacy & Compliance Architecture
-
-OmniRec enforces strict data privacy standards:
-- **No Third-Party Passwords**: Users authenticate directly with OmniRec.
-- **Data Export & Revocation**: Users can export their preference data in JSON format or disconnect store permissions instantly from the Settings screen.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 📄 License
+## 🔌 FastAPI Integration Guide
 
-Distributed under the MIT License. See `LICENSE` for more information.
+To connect a live FastAPI backend:
+1. Create a `.env.local` file in the project root:
+   ```env
+   NEXT_PUBLIC_FASTAPI_URL="http://localhost:8000/api/v1"
+   ```
+2. The frontend will automatically route requests through `src/services/api.ts` to your FastAPI endpoints. When omitted, it runs seamlessly in mock mode.
